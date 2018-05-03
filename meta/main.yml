@@ -1,0 +1,26 @@
+galaxy_info:
+  author: "Icinga Development Team <info@icinga.com>"
+  description: "Install and configure Icinga 2"
+  company: "Icinga GmbH"
+  license: "license (Apache)"
+  min_ansible_version: 2.3.2
+  platforms:
+  - name: EL
+    versions:
+    - 6
+    - 7
+  - name: Debian
+    versions:
+    - 8
+    - 9
+  - name: Ubuntu
+    - 14.04
+    - 18.04
+  categories:
+    - system
+  galaxy_tags:
+    - monitoring
+    - icinga
+    - icinga2
+
+dependencies: []
