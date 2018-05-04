@@ -1,2 +1,5 @@
 ---
-# tasks file for icinga2
+- name: include icinga2.yml
+  include: icinga2.yml
+  tags:
+      - install

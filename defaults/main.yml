@@ -1,2 +1,6 @@
 ---
-# defaults file for icinga2
+i2_use_repository: true
+i2_apt_key: "https://packages.icinga.com/icinga.key"
+i2_apt_url: "deb http://packages.icinga.com/{{ ansible_distribution|lower }} icinga-{{ ansible_distribution_release }} main"
+i2_yum_key: "https://packages.icinga.com/icinga.key"
+i2_yum_url: "http://packages.icinga.com/epel/$releasever/release/"

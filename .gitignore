@@ -5,3 +5,4 @@
 *.ini
 *.pem
 site.yml
+tests/test.retry
