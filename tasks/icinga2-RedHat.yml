@@ -2,5 +2,5 @@
 
 - name: RedHat - Add Icinga 2 repository
   become: yes
-  copy: src=ICINGA-release.repo dest=/etc/yum.repos.d/ICINGA-release.repo
+  template: src=ICINGA-release.repo dest=/etc/yum.repos.d/ICINGA-release.repo
   when: i2_use_repository
