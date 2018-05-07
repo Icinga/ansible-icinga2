@@ -2,23 +2,31 @@
 
 - name: Debian - Install apt-transport-https
   become: yes
-  apt: name=apt-transport-https state=present
+  apt:
+    name=apt-transport-https
+    state=present
   when: i2_manage_repository
 
 - name: Debian - Add Icinga 2 repository key
   become: yes
-  apt_key: url="{{ i2_apt_key }}" state=present
+  apt_key:
+    url="{{ i2_apt_key }}"
+    state=present
   when: i2_manage_repository and i2_apt_key
 
 - name: Debian - Add Icinga 2 repository
   become: yes
-  apt_repository: repo={{ item.repo }} state={{ item.state}}
+  apt_repository:
+    repo={{ item.repo }}
+    state={{ item.state}}
   with_items:
     - { repo: "{{ i2_apt_url }}", state: "present" }
   when: i2_manage_repository
 
 - name: Debian - Ensure icinga2 is installed
   become: yes
-  apt: name=icinga2 state=present
+  apt:
+    name=icinga2
+    state=present
   notify: start icinga2
   when: i2_manage_package

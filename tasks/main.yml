@@ -5,5 +5,8 @@
       - install
 
 - name: Make sure Icinga 2 is started
-  service: name=icinga2 state=started enabled=yes
+  service:
+    name=icinga2
+    state=started
+    enabled=yes
   when: i2_manage_service
