@@ -17,7 +17,7 @@ galaxy_info:
         - 9
     - name: Ubuntu
       versions:
-        - 14.04
+        - 16.04
         - 18.04
   categories:
     - system
