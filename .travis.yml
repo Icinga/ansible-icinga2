@@ -17,7 +17,7 @@ matrix:
     - env: ANSIBLE_VERSION="2.5.2"
 branches:
   only:
-  - master
-  - /^v\d/
+    - master
+    - /^v\d/
 notifications:
   email: false
