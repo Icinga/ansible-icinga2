@@ -3,7 +3,7 @@
 - name: start icinga2
   become: yes
   service:
-    name=icinga2
-    state=started
-    enabled=yes
+    name: icinga2
+    state: started
+    enabled: yes
   when: i2_manage_service
