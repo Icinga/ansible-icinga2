@@ -17,10 +17,8 @@
 - name: Debian - Add Icinga 2 repository
   become: yes
   apt_repository:
-    repo: {{ item.repo }}
-    state: {{ item.state}}
-  with_items:
-    - { repo: "{{ i2_apt_url }}", state: "present" }
+    repo: "{{ i2_apt_url }}"
+    state: present
   when: i2_manage_repository
 
 - name: Debian - Ensure icinga2 is installed
