@@ -2,5 +2,15 @@
 
 - name: RedHat - Add Icinga 2 repository
   become: yes
-  template: src=ICINGA-release.repo dest=/etc/yum.repos.d/ICINGA-release.repo
-  when: i2_use_repository
+  template:
+    src: ICINGA-release.repo
+    dest: /etc/yum.repos.d/ICINGA-release.repo
+  when: i2_manage_repository
+
+- name: RedHat - Ensure icinga2 is installed
+  become: yes
+  yum:
+    name: icinga2
+    state: present
+  notify: start icinga2
+  when: i2_manage_package
