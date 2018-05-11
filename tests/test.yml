@@ -4,5 +4,3 @@
   remote_user: root
   roles:
     - icinga2
-  vars:
-    - i2_use_repository: true
