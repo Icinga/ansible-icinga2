@@ -9,7 +9,7 @@ reviewed and merged if they suit some general guidelines:
 * Changes are located in a topic branch
 * For new functionality, proper tests are written
 * Changes should not solve certain problems on special environments
-* Your change does not handle third party software for which dedicated Puppet modules exist
+* Your change does not handle third party software for which dedicated Ansible role exist
   * such as creating databases, installing webserver etc.
 
 ## Branches
