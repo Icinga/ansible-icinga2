@@ -3,6 +3,9 @@ Before submitting a new release, make sure all relevant pull requests and local 
 branch. All tests must pass before a release is tagged.
 
 
+## Testing
+Make sure tests pass before starting with a release. See [TESTING.md](TESTING.md) for more information.
+
 ## 1. AUTHORS
 Update the [AUTHORS](AUTHORS) and [.mailmap](.mailmap) file
 
