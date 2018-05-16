@@ -1,0 +1,16 @@
+---
+- name: Create conf.d directory
+  become: yes
+  file:
+    dest: "{{ i2_conf_dir }}/{{ item }}"
+    state: directory
+    owner: "{{ i2_user }}"
+    group: "{{ i2_group }}"
+  with_items: "{{ i2_confd }}"
+
+- name: Manage main Icinga 2 configuration
+  become: yes
+  template:
+    src: icinga2.conf.j2
+    dest: "{{ i2_conf_dir }}/icinga2.conf"
+  notify: reload icinga2

@@ -1,5 +1,4 @@
 ---
-
 - name: Debian - Install apt-transport-https
   become: yes
   apt:
