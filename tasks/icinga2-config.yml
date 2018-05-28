@@ -13,4 +13,17 @@
   template:
     src: icinga2.conf.j2
     dest: "{{ i2_conf_dir }}/icinga2.conf"
+    owner: "{{ i2_user }}"
+    group: "{{ i2_group }}"
+    mode: 0644
+  notify: reload icinga2
+
+- name: Manage Icinga 2 constants
+  become: yes
+  template:
+    src: constants.conf.j2
+    dest: "{{ i2_conf_dir }}/constants.conf"
+    owner: "{{ i2_user }}"
+    group: "{{ i2_group }}"
+    mode: 0644
   notify: reload icinga2
