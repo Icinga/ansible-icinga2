@@ -60,13 +60,7 @@ You may choose to use your own or the systems default repositories. Repository m
     - [Variable: i2_i2_yum_url](#variable-i2_yum_url)
     - [Variable: i2_confd](#variable-i2_confd)
     - [Variable: i2_include_plugins](#variable-i2_include_plugins)
-    - [Variable: i2_const_plugindir](#variable-i2_const_plugindir)
-    - [Variable: i2_const_manubulonplugindir](#variable-i2_const_manubulonplugindir)
-    - [Variable: i2_const_plugincontribdir](#variable-i2_const_plugincontribdir)
-    - [Variable: i2_const_nodename](#variable-i2_const_nodename)
-    - [Variable: i2_const_zonename](#variable-i2_const_zonename)
-    - [Variable: i2_const_ticketsalt](#variable-i2_const_ticketsalt)
-    - [Variable: i2_constants](#variable-i2_constants)
+    - [Variable: i2_custom_constants](#variable-i2_custom_constants)
 - [**Variables system specific](#variables-os-specific)
     - [Variable: i2_conf_dir](#variable-i2_conf_dir)
     - [Variable: i2_user](#variable-i2_user)
@@ -131,16 +125,28 @@ Set `ZoneName` constant. Defaults to `{{ ansible_fqdn }}`.
 #### Variable: `i2_const_ticketsalt`
 Set `TicketSalt` constant. Empty by default.
 
-#### Variable: `i2_constants`
-Add custom constants to `constants.conf`. Must be a dictionary.
+#### Variable: `i2_custom_constants`
+Add custom constants to `constants.conf`. Must be a dictionary. Defaults to: `{}`
 
-Example:
+Some default required values are specified in `i2_default_constants` and merged with this variable. Use this variable to override these default values, or add your own constants.
+
+Default values of `i2_default_constants`:
+```yaml
+  PluginDir: "{{ i2_lib_dir }}/nagios/plugins"
+  ManubulonPluginDir: "{{ i2_lib_dir }}/nagios/plugins"
+  PluginContribDir: "{{ i2_lib_dir }}/nagios/plugins"
+  NodeName: "{{ ansible_fqdn }}"
+  ZoneName: "{{ ansible_fqdn }}"
+  TicketSalt: ""
+```
+
+Example usage:
 ```yaml
   vars:
     - i2_constants:
-        foo: "bar"
+        TicketSalt: "My ticket salt"
+        Foo: "bar"
 ```
-
 
 ### Variables system specific
 The following variables are system specific and don't need to be overwritten in most cases. Be careful when making

@@ -15,10 +15,4 @@ i2_include_plugins:
   - "manubulon"
   - "windows-plugins"
   - "nscp"
-i2_const_plugindir: "{{ i2_lib_dir }}/nagios/plugins"
-i2_const_manubulonplugindir: "{{ i2_lib_dir }}/nagios/plugins"
-i2_const_plugincontribdir: "{{ i2_lib_dir }}/nagios/plugins"
-i2_const_nodename: "{{ ansible_fqdn }}"
-i2_const_zonename: "{{ ansible_fqdn }}"
-i2_const_ticketsalt: ""
-i2_constants: {}
+i2_custom_constants: {}
