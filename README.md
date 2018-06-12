@@ -58,8 +58,23 @@ You may choose to use your own or the systems default repositories. Repository m
     - [Variable: i2_apt_url](#variable-i2_apt_url)
     - [Variable: i2_i2_yum_key](#variable-i2_yum_key)
     - [Variable: i2_i2_yum_url](#variable-i2_yum_url)
+    - [Variable: i2_confd](#variable-i2_confd)
+    - [Variable: i2_include_plugins](#variable-i2_include_plugins)
+    - [Variable: i2_const_plugindir](#variable-i2_const_plugindir)
+    - [Variable: i2_const_manubulonplugindir](#variable-i2_const_manubulonplugindir)
+    - [Variable: i2_const_plugincontribdir](#variable-i2_const_plugincontribdir)
+    - [Variable: i2_const_nodename](#variable-i2_const_nodename)
+    - [Variable: i2_const_zonename](#variable-i2_const_zonename)
+    - [Variable: i2_const_ticketsalt](#variable-i2_const_ticketsalt)
+    - [Variable: i2_constants](#variable-i2_constants)
+- [**Variables system specific](#variables-os-specific)
+    - [Variable: i2_conf_dir](#variable-i2_conf_dir)
+    - [Variable: i2_user](#variable-i2_user)
+    - [Variable: i2_group](#variable-i2_group)
+    - [Variable: i2_lib_dir](#variable-i2_lib_dir)
 - [**Handlers**](#handlers)
     - [Handler: start icinga2](#handler-start-icinga2)
+    - [Handler: reload icinga2](#handler-reload-icinga2)
 
 ### Variables
 
@@ -89,11 +104,69 @@ GPG key used to verify packages on YUM based sytems. The key URL will be added t
 Repository URL for YUM based sytem. Defaults to `http://packages.icinga.com/epel/$releasever/release/`. This may be
 customized if you have a local mirror.
 
+#### Variable: `i2_confd`
+By default configuration located in `/etc/icinga2/conf.d` is included. This directory this directory may be change.
+Defaults to `confd.`. 
+
+#### Variable: `i2_include_plugins`
+The [ITL](https://www.icinga.com/docs/icinga2/latest/doc/10-icinga-template-library/) comes with a set of
+pre-configured check commands. This variable defines what to include. Defaults to 
+`["itl", "plugins", "plugins-contrib", "manubulon", "windows-plugins", "nscp"]`
+
+#### Variable: `i2_const_plugindir`
+Set `PluginDir` constant. Deafults to `{{ i2_lib_dir }}/nagios/plugins`.
+
+#### Variable: `i2_const_manubulonplugindir`
+Set `ManubulonPluginDir` constant. Defaults to `{{ i2_lib_dir }}/nagios/plugins`.
+
+#### Variable: `i2_const_plugincontribdir`
+Set `PluginContribDir` constant. Defualts to `{{ i2_lib_dir }}/nagios/plugins`.
+
+#### Variable: `i2_const_nodename`
+Set `NodeName` constant. Defaults to `{{ ansible_fqdn }}`.
+
+#### Variable: `i2_const_zonename`
+Set `ZoneName` constant. Defaults to `{{ ansible_fqdn }}`.
+
+#### Variable: `i2_const_ticketsalt`
+Set `TicketSalt` constant. Empty by default.
+
+#### Variable: `i2_constants`
+Add custom constants to `constants.conf`. Must be a dictionary.
+
+Example:
+```yaml
+  vars:
+    - i2_constants:
+        foo: "bar"
+```
+
+
+### Variables system specific
+The following variables are system specific and don't need to be overwritten in most cases. Be careful when making
+changes to any of these variables.
+
+#### Variable: `i2_conf_dir`
+Base Icinga 2 configuration directory. Defaults to `/etc/icinga2`.
+
+#### Variable: `i2_user`
+Icinga 2 running as user. Default depends on OS.
+
+#### Variable: `i2_group`
+Icinga 2 running as group. Default depends on OS.
+
+#### Variable: `i2_lib_dir`
+Lib dir. Default depends on OS.
+
 ### Handlers
 
 #### Handler: `start icinga2`
 This handler starts Icinga 2. It is only used to make sure Icinga 2 is running. You can prevent this handler from
 being triggerd by setting `i2_manage_service` to false.
+
+#### Handler: `reload icinga2`
+This handler reloads Icinga 2 when configuration changes. You can prevent this handler from being triggerd by setting
+`i2_manage_service` to false.
 
 ## Development
 A roadmap of this project is located at https://github.com/Icinga/ansible-icinga2/milestones. Please consider this

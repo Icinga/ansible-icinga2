@@ -1,0 +1,36 @@
+// {{ ansible_managed }}
+
+/**
+ * This file defines global constants which can be used in
+ * the other configuration files.
+ */
+
+/* The directory which contains the plugins from the Monitoring Plugins project. */
+const PluginDir = "{{ i2_const_plugindir }}"
+
+/* The directory which contains the Manubulon plugins.
+ * Check the documentation, chapter "SNMP Manubulon Plugin Check Commands", for details.
+ */
+const ManubulonPluginDir = "{{ i2_const_manubulonplugindir }}"
+
+/* The directory which you use to store additional plugins which ITL provides user contributed command definitions for.
+ * Check the documentation, chapter "Plugins Contribution", for details.
+ */
+const PluginContribDir = "{{ i2_const_plugincontribdir }}"
+
+/* Our local instance name. By default this is the server's hostname as returned by `hostname --fqdn`.
+ * This should be the common name from the API certificate.
+ */
+const NodeName = "{{ i2_const_nodename }}"
+
+/* Our local zone name. */
+const ZoneName = "{{ i2_const_zonename }}"
+
+/* Secret key for remote node tickets */
+const TicketSalt = "{{ i2_const_ticketsalt }}"
+
+/* Additional Constants */
+
+{% for name, value in i2_constants.items() %}
+const {{ name }} = "{{ value }}""
+{% endfor %}

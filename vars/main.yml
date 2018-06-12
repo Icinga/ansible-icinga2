@@ -1,2 +1,2 @@
 ---
-# vars file for icinga2
+i2_conf_dir: "/etc/icinga2"

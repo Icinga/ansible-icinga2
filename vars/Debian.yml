@@ -1,0 +1,4 @@
+---
+i2_user: nagios
+i2_group: nagios
+i2_lib_dir: /usr/lib

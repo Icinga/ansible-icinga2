@@ -1,0 +1,4 @@
+---
+i2_user: icinga
+i2_group: icinga
+i2_lib_dir: /usr/lib64

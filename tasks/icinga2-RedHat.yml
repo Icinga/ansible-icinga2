@@ -1,5 +1,4 @@
 ---
-
 - name: RedHat - Add Icinga 2 repository
   become: yes
   yum_repository:
