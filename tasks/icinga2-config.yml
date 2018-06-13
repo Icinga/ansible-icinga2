@@ -18,6 +18,22 @@
     mode: 0644
   notify: reload icinga2
 
+- name: Check for constants sample file
+  stat:
+    path: "{{ i2_conf_dir }}/constants.conf-sample"
+  register: sample_file
+
+- name: Copy original Icinga 2 config to sample
+  become: yes
+  copy:
+    remote_src: true
+    src: "{{ i2_conf_dir }}/constants.conf"
+    dest: "{{ i2_conf_dir }}/constants.conf-sample"
+    owner: "{{ i2_user }}"
+    group: "{{ i2_group }}"
+    mode: 0644
+  when: not sample_file.stat.exists
+
 - name: Manage Icinga 2 constants
   become: yes
   template:
