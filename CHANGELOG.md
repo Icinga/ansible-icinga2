@@ -1,5 +1,17 @@
 # Change Log
 
+## [v0.2.0](https://github.com/Icinga/ansible-icinga2/tree/v0.2.0) (2018-07-20)
+[Full Changelog](https://github.com/Icinga/ansible-icinga2/compare/v0.1.0...v0.2.0)
+
+**Implemented enhancements:**
+
+- Main configuration handling [\#9](https://github.com/Icinga/ansible-icinga2/issues/9)
+
+**Merged pull requests:**
+
+- i2\_constants refactor [\#13](https://github.com/Icinga/ansible-icinga2/pull/13) ([RossBarnie](https://github.com/RossBarnie))
+- Feature/main configuration [\#11](https://github.com/Icinga/ansible-icinga2/pull/11) ([bobapple](https://github.com/bobapple))
+
 ## [v0.1.0](https://github.com/Icinga/ansible-icinga2/tree/v0.1.0) (2018-05-28)
 **Implemented enhancements:**
 
