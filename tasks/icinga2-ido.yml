@@ -12,12 +12,12 @@
 
 - name: Create IDO Configuration file
   template:
-    src: ido_mysql.conf.j2
-    dest: "/etc/icinga2/features-enabled/ido_mysql.conf"
-    owner: "{{ user }}"
-    group: "{{ group }}"
-    mode: 0644
+      src: ido_mysql.conf.j2
+      dest: "/etc/icinga2/features-enabled/ido_mysql.conf"
+      owner: "{{ user }}"
+      group: "{{ group }}"
+      mode: 0644
   tags:
-    - config
-    - install
-    - ido
+      - config
+      - install
+      - ido
