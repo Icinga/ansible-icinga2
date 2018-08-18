@@ -6,3 +6,7 @@
 - name: Include specific Icinga 2
   include: icinga2-RedHat.yml
   when: ansible_os_family == 'RedHat'
+
+- name: Configure Icinga 2 IDO
+  include: icinga2-ido.yml
+  when: ido_enabled

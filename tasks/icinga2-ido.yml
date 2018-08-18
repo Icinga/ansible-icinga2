@@ -1,0 +1,23 @@
+---
+- name: Install IDO package
+  package:
+      name: "icinga2-ido-mysql"
+      state: present
+
+- name: include IDO Variables
+  include_vars: ido.yml
+  tags:
+      - install
+      - ido
+
+- name: Create IDO Configuration file
+  template:
+    src: ido_mysql.conf.j2
+    dest: "/etc/icinga2/features-enabled/ido_mysql.conf"
+    owner: "{{ user }}"
+    group: "{{ group }}"
+    mode: 0644
+  tags:
+    - config
+    - install
+    - ido

@@ -1,4 +1,3 @@
----
 i2_conf_dir: "/etc/icinga2"
 i2_features_available_dir: "{{ i2_conf_dir }}/features-available"
 i2_features_enabled_dir: "{{ i2_conf_dir }}/features-enabled"
@@ -11,3 +10,5 @@ i2_default_constants:
   TicketSalt: ""
 i2_constants: "{{ i2_default_constants | combine(i2_custom_constants) }}"
 i2_features: "{{ i2_custom_features }}"
+
+ido_enabled: False

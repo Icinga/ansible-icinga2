@@ -1,5 +1,4 @@
 // {{ ansible_managed }}
-
 /**
  * Icinga 2 configuration file
  * - this is where you define settings for the Icinga application including
@@ -12,13 +11,13 @@
 /**
  * The constants.conf defines global constants.
  */
-include "constants.conf"
+include "{{ constants }}"
 
 /**
  * The zones.conf defines zones for a cluster setup.
  * Not required for single instance setups.
  */
-include "zones.conf"
+include "{{ zones }}"
 
 /**
  * The Icinga Template Library (ITL) provides a number of useful templates
@@ -28,6 +27,18 @@ include "zones.conf"
 {% for plugins in i2_include_plugins %}
 include <{{ plugins }}>
 {% endfor %}
+
+/**
+ * This includes the Icinga 2 Windows plugins. These command definitions
+ * are required on a master node when a client is used as command endpoint.
+ */
+include <windows-plugins>
+
+/**
+ * This includes the NSClient++ check commands. These command definitions
+ * are required on a master node when a client is used as command endpoint.
+ */
+include <nscp>
 
 /**
  * The features-available directory contains a number of configuration
