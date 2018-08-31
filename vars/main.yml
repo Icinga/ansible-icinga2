@@ -1,3 +1,4 @@
+---
 i2_conf_dir: "/etc/icinga2"
 i2_features_available_dir: "{{ i2_conf_dir }}/features-available"
 i2_features_enabled_dir: "{{ i2_conf_dir }}/features-enabled"
