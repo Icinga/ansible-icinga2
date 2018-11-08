@@ -6,6 +6,7 @@ i2_yum_key: "https://packages.icinga.com/icinga.key"
 i2_yum_url: "http://packages.icinga.com/epel/$releasever/release/"
 i2_manage_package: true
 i2_manage_service: true
+i2_remove_unmanaged_features: false
 i2_confd:
   - "conf.d"
 i2_include_plugins:

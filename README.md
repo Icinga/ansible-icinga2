@@ -86,7 +86,7 @@ GPG key used to verify packages on APT based system. The key will be imported. D
 `https://packages.icinga.com/icinga.key`.
 
 #### Variable: `i2_apt_url`
-Repository URL for APT based systems. Defaults 
+Repository URL for APT based systems. Defaults
 to `deb http://packages.icinga.com/{{ ansible_distribution|lower }} icinga-{{ ansible_distribution_release }} main`.
 This may be customized if you have a local mirror.
 
@@ -100,11 +100,11 @@ customized if you have a local mirror.
 
 #### Variable: `i2_confd`
 By default configuration located in `/etc/icinga2/conf.d` is included. This directory this directory may be change.
-Defaults to `confd.`. 
+Defaults to `confd.`.
 
 #### Variable: `i2_include_plugins`
 The [ITL](https://www.icinga.com/docs/icinga2/latest/doc/10-icinga-template-library/) comes with a set of
-pre-configured check commands. This variable defines what to include. Defaults to 
+pre-configured check commands. This variable defines what to include. Defaults to
 `["itl", "plugins", "plugins-contrib", "manubulon", "windows-plugins", "nscp"]`
 
 #### Variable: `i2_const_plugindir`
@@ -163,6 +163,31 @@ Icinga 2 running as group. Default depends on OS.
 
 #### Variable: `i2_lib_dir`
 Lib dir. Default depends on OS.
+
+### Feature Usage
+
+#### Variable: `i2_custom_features`
+Features are maintained over the dictionary `i2_custom_features`.
+By default features won't be managed until `i2_custom_features` has further values.
+
+Example usage:
+
+```yaml
+vars:
+  - i2_custom_features:
+    ApiListener:                #ObjectType
+      api:                      #ObjectName
+        accept_command: true    #ObjectAttribute
+        accept_config: true     #ObjectAttribute
+    GraphiteWriter:
+      graphite:
+        host: "127.0.0.1"
+        port: "2004"
+```
+
+#### Variable: `i2_remove_unmanaged_features`
+The variable `i2_remove_unmanaged_features` change the behaviour of the feature handling.
+It will remove all **unmanged** `.conf` files from the directory `/etc/icinga2/features-enabled` and let you manage only your defined features.
 
 ### Handlers
 
