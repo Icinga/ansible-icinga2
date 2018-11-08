@@ -1,6 +1,9 @@
 ---
 - name: Include OS specific vars
   include_vars: "{{ansible_os_family}}.yml"
+  tags:
+    - feature-handler
+    - config
 
 - name: include icinga2.yml
   include: icinga2.yml
@@ -11,6 +14,12 @@
   include: icinga2-config.yml
   tags:
       - config
+
+- name: include icinga2-features.yml
+  include: icinga2-features.yml
+  when: i2_features|flatten|length > 0
+  tags:
+    - feature-handler
 
 - name: Make sure Icinga 2 is started
   service:
