@@ -1,4 +1,5 @@
 .idea/
+.molecule/default/tests/__pycache__/*
 *.test
 *.list
 *.sh

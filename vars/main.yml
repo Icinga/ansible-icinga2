@@ -1,5 +1,7 @@
 ---
 i2_conf_dir: "/etc/icinga2"
+i2_features_available_dir: "{{ i2_conf_dir }}/features-available"
+i2_features_enabled_dir: "{{ i2_conf_dir }}/features-enabled"
 i2_default_constants:
   PluginDir: "{{ i2_lib_dir }}/nagios/plugins"
   ManubulonPluginDir: "{{ i2_lib_dir }}/nagios/plugins"
@@ -8,3 +10,4 @@ i2_default_constants:
   ZoneName: "{{ ansible_fqdn }}"
   TicketSalt: ""
 i2_constants: "{{ i2_default_constants | combine(i2_custom_constants) }}"
+i2_features: "{{ i2_custom_features }}"
