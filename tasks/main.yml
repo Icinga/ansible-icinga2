@@ -8,12 +8,12 @@
 - name: include icinga2.yml
   include: icinga2.yml
   tags:
-      - install
+    - install
 
 - name: include icinga2-config.yml
   include: icinga2-config.yml
   tags:
-      - config
+    - config
 
 - name: include icinga2-features.yml
   include: icinga2-features.yml
@@ -23,7 +23,7 @@
 
 - name: Make sure Icinga 2 is started
   service:
-      name: icinga2
-      state: started
-      enabled: yes
+    name: icinga2
+    state: started
+    enabled: yes
   when: i2_manage_service

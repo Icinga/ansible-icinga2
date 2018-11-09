@@ -1,3 +1,4 @@
+---
 - name: collect all enabled features
   become: yes
   find:
