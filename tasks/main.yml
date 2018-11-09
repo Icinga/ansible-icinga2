@@ -16,7 +16,7 @@
     - config
 
 - name: include icinga2-features.yml
-  include: icinga2-features.yml
+  include_tasks: icinga2-features.yml
   when: i2_features|flatten|length > 0
   tags:
     - feature-handler
