@@ -61,7 +61,7 @@ You may choose to use your own or the systems default repositories. Repository m
     - [Variable: i2_confd](#variable-i2_confd)
     - [Variable: i2_include_plugins](#variable-i2_include_plugins)
     - [Variable: i2_custom_constants](#variable-i2_custom_constants)
-- [**Variables system specific](#variables-os-specific)
+- [**System specific variables**](#variables-os-specific)
     - [Variable: i2_conf_dir](#variable-i2_conf_dir)
     - [Variable: i2_user](#variable-i2_user)
     - [Variable: i2_group](#variable-i2_group)
@@ -99,8 +99,8 @@ Repository URL for YUM based sytem. Defaults to `http://packages.icinga.com/epel
 customized if you have a local mirror.
 
 #### Variable: `i2_confd`
-By default configuration located in `/etc/icinga2/conf.d` is included. This directory this directory may be change.
-Defaults to `confd.`.
+By default, configuration located in `/etc/icinga2/conf.d` is included. This list may be modified to include additional directories or set to `[]` to not include `conf.d` at all (e.g. on distributed installations).
+Defaults to `[ "conf.d" ]`.
 
 #### Variable: `i2_include_plugins`
 The [ITL](https://www.icinga.com/docs/icinga2/latest/doc/10-icinga-template-library/) comes with a set of
@@ -108,7 +108,7 @@ pre-configured check commands. This variable defines what to include. Defaults t
 `["itl", "plugins", "plugins-contrib", "manubulon", "windows-plugins", "nscp"]`
 
 #### Variable: `i2_const_plugindir`
-Set `PluginDir` constant. Deafults to `{{ i2_lib_dir }}/nagios/plugins`.
+Set `PluginDir` constant. Defaults to `{{ i2_lib_dir }}/nagios/plugins`.
 
 #### Variable: `i2_const_manubulonplugindir`
 Set `ManubulonPluginDir` constant. Defaults to `{{ i2_lib_dir }}/nagios/plugins`.
@@ -148,7 +148,7 @@ Example usage:
         Foo: "bar"
 ```
 
-### Variables system specific
+### System specific variables
 The following variables are system specific and don't need to be overwritten in most cases. Be careful when making
 changes to any of these variables.
 
@@ -193,10 +193,10 @@ It will remove all **unmanged** `.conf` files from the directory `/etc/icinga2/f
 
 #### Handler: `start icinga2`
 This handler starts Icinga 2. It is only used to make sure Icinga 2 is running. You can prevent this handler from
-being triggerd by setting `i2_manage_service` to false.
+being triggered by setting `i2_manage_service` to false.
 
 #### Handler: `reload icinga2`
-This handler reloads Icinga 2 when configuration changes. You can prevent this handler from being triggerd by setting
+This handler reloads Icinga 2 when configuration changes. You can prevent this handler from being triggered by setting
 `i2_manage_service` to false.
 
 ## Development
