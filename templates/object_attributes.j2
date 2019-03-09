@@ -1,0 +1,33 @@
+{% macro attrs(map, exclude=[]) %}
+{% for k, v in map.iteritems() %}
+{%- if v is mapping %}
+{{ mapdict(k,v) | indent(width=2)}}
+{%- else %}
+{{ eval_value(k,v) }}
+{% endif %}
+{% endfor %}
+{% endmacro %}
+
+{% macro mapdict(key,dictionary) %}
+{{ key }} = {
+{% for i, w in dictionary.iteritems() %}
+{%- if w is mapping %}
+{{ mapdict(i,w) | indent(width=2)}}
+{%- else %}
+{{ eval_value(i,w) }}
+{% endif %}
+{% endfor %}
+}
+{% endmacro %}
+
+{% macro eval_value(key,val) %}
+{%- if val is iterable and val is not string %}
+{{ key }} = [ "{{ val | map('quote') | join('", "') }}" ]
+{%- elif val is match('^\d+(ms|s|h|d)?$') %}
+{{ key }} = {{ val }}
+{%- elif val | bool == False and val | string == "false" %}
+{{ key }} = {{ val }}
+{%- else %}
+{{ key }} = "{{ val | quote }}"
+{%- endif %}
+{% endmacro %}

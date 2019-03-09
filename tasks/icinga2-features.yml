@@ -1,0 +1,45 @@
+---
+- name: collect all enabled features
+  become: yes
+  find:
+    paths: "{{ i2_features_enabled_dir }}/"
+    patterns: '*.conf'
+    file_type: any
+  register: enabled_features
+  when:
+    - i2_remove_unmanaged_features
+
+- name: generate enabled feature configuration
+  become: yes
+  template:
+    src: templates/feature-generic-template.conf.j2
+    dest: "{{ i2_features_enabled_dir }}/{{ item.key }}.conf"
+    owner: "{{ i2_user }}"
+    group: "{{ i2_group }}"
+    mode: 0644
+  with_dict: "{{ i2_features }}"
+  register: managed_features
+  notify:
+    - restart icinga2
+
+- name: set fact enabled_files
+  set_fact:
+    enabled_files: "{{ enabled_files|default([]) + [ item.path ] }}"
+  loop: "{{ enabled_features.files }}"
+  when:
+    - i2_remove_unmanaged_features
+
+- name: Set Fact managed_features_files
+  set_fact:
+    managed_feature_files: "{{ item.dest }}"
+  with_items: "{{ managed_features.results }}"
+  when:
+    - i2_remove_unmanaged_features
+
+- name: removing unmanaged features
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items: "{{ enabled_files|default([]) }}"
+  when:
+    - item not in managed_feature_files and i2_remove_unmanaged_features

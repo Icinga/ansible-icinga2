@@ -164,6 +164,31 @@ Icinga 2 running as group. Default depends on OS.
 #### Variable: `i2_lib_dir`
 Lib dir. Default depends on OS.
 
+### Feature Usage
+
+#### Variable: `i2_custom_features`
+Features are maintained over the dictionary `i2_custom_features`.
+By default features won't be managed until `i2_custom_features` has further values.
+
+Example usage:
+
+```yaml
+vars:
+  - i2_custom_features:
+    ApiListener:                #ObjectType
+      api:                      #ObjectName
+        accept_command: true    #ObjectAttribute
+        accept_config: true     #ObjectAttribute
+    GraphiteWriter:
+      graphite:
+        host: "127.0.0.1"
+        port: "2004"
+```
+
+#### Variable: `i2_remove_unmanaged_features`
+The variable `i2_remove_unmanaged_features` change the behaviour of the feature handling.
+It will remove all **unmanged** `.conf` files from the directory `/etc/icinga2/features-enabled` and let you manage only your defined features.
+
 ### Handlers
 
 #### Handler: `start icinga2`

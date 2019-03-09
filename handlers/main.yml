@@ -13,3 +13,10 @@
     name: icinga2
     state: reloaded
   when: i2_manage_service
+
+- name: restart icinga2
+  become: yes
+  service:
+    name: icinga2
+    state: restarted
+  when: i2_manage_service
