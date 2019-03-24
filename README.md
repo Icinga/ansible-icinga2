@@ -4,11 +4,10 @@
 
 Ansible role to install and configure [Icinga 2](https://www.icinga.com/products/icinga-2/).
 
+# This Role is in development stage 
+
 ## Setup
 
-``` bash
-$ ansible-galaxy install icinga.icinga2
-```
 
 ### Limitations
 
