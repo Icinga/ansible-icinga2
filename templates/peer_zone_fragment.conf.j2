@@ -1,0 +1,19 @@
+{% for peer_node in i2_peer_nodes %}
+object Endpoint {{ peer_node|constants }} {
+{#
+  Masters always need to connect to their peers (if any).
+  However, nodes don't connect to upstream in a top-down setup.
+#}
+{% if i2_connection_direction == 'bottom-up' or (i2_master and hostvars[peer_node].i2_master)  %}
+  host = "{{ hostvars[peer_node].ansible_facts.default_ipv4.address }}"
+  port = "{{ hostvars[peer_node].i2_api_port }}"
+{% endif %}
+}
+{% endfor %}
+
+{# Masters already handle this in default_zone_fragment #}
+{% if i2_master is sameas false %}
+object Zone "{{ i2_zone }}" {
+  endpoints = [ {{ i2_peer_nodes|map('constants')|join(', ') }} ]
+}
+{% endif %}

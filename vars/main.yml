@@ -11,3 +11,14 @@ i2_default_constants:
   TicketSalt: ""
 i2_constants: "{{ i2_default_constants | combine(i2_custom_constants) }}"
 i2_features: "{{ i2_custom_features }}"
+i2_objects: "{{ i2_custom_objects }}"
+i2_templates: "{{ i2_custom_templates }}"
+i2_apply_rules: "{{ i2_custom_apply_rules }}"
+
+i2_ca_file: "{{ i2_ca_path }}/ca.crt"
+i2_pki_file: "{{ i2_pki_path }}/{{ ansible_fqdn }}.crt"
+
+# i2_config_master:
+# Would it be possible to determine this value implicitly by doing something like
+# when: inventory_hostname in groups['masters'] and (groups['masters']|length == 1 or i2_config_master)
+# ??

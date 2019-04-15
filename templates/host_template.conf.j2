@@ -1,0 +1,23 @@
+// {{ ansible_managed }}
+{% import 'object_attributes.j2' as attributes %}
+
+object Host "{{ item }}" {
+   {% if hostvars[item].i2_host_template is defined -%}
+   import "{{ hostvars[item].i2_host_template }}"
+   {% else -%}
+   import "generic-host"
+   {% endif -%}
+   address = "{{ hostvars[item].ansible_default_ipv4.address }}"
+
+   vars.os = "{{ hostvars[item].ansible_system }}"
+   vars.os_family = "{{ hostvars[item].ansible_os_family }}"
+   {% if hostvars[item].i2_host_parameters is defined -%}
+   {% set params = hostvars[item].i2_host_parameters %}
+   {% if params.attributes is defined -%}
+   {{ attributes.attrs(params.attributes) -}}
+   {% endif %}
+   {%- if params.variables is defined -%}
+   {{ attributes.attrs(params.variables, 'vars.') -}}
+   {% endif -%}
+   {% endif -%}
+}

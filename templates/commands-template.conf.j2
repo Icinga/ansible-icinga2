@@ -1,0 +1,7 @@
+// {{ ansible_managed }}
+{% import 'object_macro.j2' as object %}
+{% if hostvars[item].i2_commands is defined -%}
+{% for command in hostvars[item].i2_commands -%}
+  {{ object(command) }}
+{% endfor %}
+{% endif %}

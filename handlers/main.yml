@@ -7,6 +7,21 @@
     enabled: yes
   when: i2_manage_service
 
+- name: import ido schema
+  become: yes
+  mysql_db:
+    config_file: "{{ mysql_defaults_file }}"
+    name: "{{ i2_ido_params.database }}"
+    state: import
+    target: "{{ i2_ido_mysql_schema }}"
+
+- name: restart mysqld
+  become: yes
+  service:
+    name: mysql
+    state: restarted
+  when: i2_manage_service and i2_ido_backend == 'mysql'
+
 - name: reload icinga2
   become: yes
   service:
@@ -20,3 +35,11 @@
     name: icinga2
     state: restarted
   when: i2_manage_service
+
+- name: reload icinga2 on master
+  become: yes
+  service:
+    name: icinga2
+    state: reloaded
+  when: i2_manage_service
+  delegate_to: "{{ groups['masters'][0] }}"

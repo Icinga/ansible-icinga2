@@ -1,12 +1,13 @@
 ---
 i2_manage_repository: true
 i2_apt_key: "https://packages.icinga.com/icinga.key"
-i2_apt_url: "deb http://packages.icinga.com/{{ ansible_distribution|lower }} icinga-{{ ansible_distribution_release }} main"
+i2_apt_url: "deb http://packages.icinga.com/{{ ansible_lsb.id|lower }} icinga-{{ ansible_distribution_release }} main"
 i2_yum_key: "https://packages.icinga.com/icinga.key"
 i2_yum_url: "http://packages.icinga.com/epel/$releasever/release/"
 i2_manage_package: true
 i2_manage_service: true
-i2_remove_unmanaged_features: false
+i2_setup_ido: no
+i2_keep_backups: yes
 i2_confd:
   - "conf.d"
 i2_include_plugins:
@@ -18,3 +19,30 @@ i2_include_plugins:
   - "nscp"
 i2_custom_constants: {}
 i2_custom_features: {}
+i2_custom_templates: {}
+i2_custom_objects: {}
+i2_custom_apply_rules: {}
+
+i2_remove_unmanaged_features: false
+
+i2_api_port: 5665
+i2_connection_direction: 'top-down'
+i2_master: no
+i2_config_master: no
+i2_secondary_master: no
+i2_satellite: no
+i2_zone: master
+
+i2_ca_path: /var/lib/icinga2/ca
+i2_pki_path: /var/lib/icinga2/certs
+
+i2_zones_dir: "{{ i2_conf_dir }}/zones.d"
+i2_global_dir: "{{ i2_zones_dir }}/global-templates"
+
+i2_ido_params:
+  database: icinga
+  user: icinga
+  password: icinga
+i2_ido_mysql_schema: /usr/share/icinga2-ido-mysql/schema/mysql.sql
+
+i2_plugins: []

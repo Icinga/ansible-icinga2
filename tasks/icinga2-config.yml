@@ -19,6 +19,7 @@
   notify: reload icinga2
 
 - name: Check for constants sample file
+  become: yes
   stat:
     path: "{{ i2_conf_dir }}/constants.conf-sample"
   register: sample_file
@@ -43,3 +44,99 @@
     group: "{{ i2_group }}"
     mode: 0644
   notify: reload icinga2
+
+- name: Check for zones.conf sample file
+  become: yes
+  stat:
+    path: "{{ i2_conf_dir }}/zones.conf-sample"
+  register: zones_sample_file
+
+- name: Copy original Icinga 2 zones.conf to sample
+  become: yes
+  copy:
+    remote_src: true
+    src: "{{ i2_conf_dir }}/zones.conf"
+    dest: "{{ i2_conf_dir }}/zones.conf-sample"
+    owner: "{{ i2_user }}"
+    group: "{{ i2_group }}"
+    mode: 0644
+  when: not zones_sample_file.stat.exists
+
+- name: Check if Client Certificates exist
+  become: yes
+  stat:
+    path: "{{ i2_pki_file }}"
+  register: client_certificate
+
+- name: Set-up Zone and Endpoints for localhost
+  become: yes
+  template:
+    src: default_zone_fragment.j2
+    dest: "{{ i2_conf_dir }}/zones.conf"
+    owner: "{{ i2_user }}"
+    group: "{{ i2_group }}"
+    mode: 0644
+    backup: "{{ i2_keep_backups }}"
+  when: client_certificate.stat.exists
+  notify: reload icinga2
+
+# icinga2 node setup takes care of this for us on first-run
+- name: Set-up zones.conf on peers, satellites and agents
+  become: yes
+  blockinfile:
+    create: yes
+    owner: "{{ i2_user }}"
+    group: "{{ i2_group }}"
+    dest: "{{ i2_conf_dir }}/zones.conf"
+    marker: "// {mark} Ansible managed block for peers or parents"
+    content: "{{ lookup('template', 'templates/peer_zone_fragment.conf.j2') }}"
+  when: i2_master or client_certificate.stat.exists
+
+- name: Add global-templates zone to zones.conf
+  become: yes
+  blockinfile:
+    create: yes
+    owner: "{{ i2_user }}"
+    group: "{{ i2_group }}"
+    dest: "{{ i2_conf_dir }}/zones.conf"
+    marker: "// {mark} Ansible managed block for global-templates"
+    block: |
+      object Zone "global-templates" {
+        global = true
+      }
+
+- name: Set-up remote Zones and Endpoints on Masters
+  become: yes
+  blockinfile:
+    create: yes
+    owner: "{{ i2_user }}"
+    group: "{{ i2_group }}"
+    dest: "{{ i2_conf_dir }}/zones.conf"
+    marker: "// {mark} Ansible managed block for {{ item }} (satellite)"
+    content: "{{ lookup('template', 'templates/zone_fragment.conf.j2') }}"
+  loop: "{{ groups['satellites'] }}"
+  when: i2_master
+  notify: reload icinga2
+  # when: inventory_hostname in groups['masters']
+  # delegate_to: "{{ groups['masters'][0] }}"
+  # delegate_to: i2_config_master
+  # when: inventory_hostname in groups['satellites']
+  # when: also nodes directly connecting to master (groups['tomaster'])
+
+# WARNING: "agents" doesn't exist in ACT hosts inventory
+- name: Set-up remote Zones and Endpoints on Satellites
+  become: yes
+  blockinfile:
+    create: yes
+    owner: "{{ i2_user }}"
+    group: "{{ i2_group }}"
+    dest: "{{ i2_zones_dir }}/{{ hostvars[item].i2_zone }}/endpoints.conf"
+    marker: "// {mark} Ansible managed block for {{ item }} (client)"
+    content: "{{ lookup('template', 'templates/zone_fragment.conf.j2') }}"
+  loop: "{{ groups['agents'] }}"
+  when: i2_satellite
+  notify: reload icinga2
+  # when: inventory_hostname in groups['satelites']
+  # delegate_to: "{{ groups['masters'][0] }}"
+  # when: inventory_hostname in groups['agents']
+  # when: i2_master is sameas false and i2_satellite is sameas false

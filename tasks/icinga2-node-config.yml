@@ -1,0 +1,63 @@
+# This file does not run on master nodes
+---
+- name: Check if Certificate Authority is available
+  become: yes
+  stat:
+    path: "{{ i2_pki_path }}/trusted_parent.crt"
+  register: trusted_authority
+
+- name: Initialize Certificate Directory
+  become: yes
+  file:
+    path: "{{ i2_pki_path }}"
+    state: directory
+    owner: "{{ i2_user }}"
+    group: "{{ i2_group }}"
+    mode: 0700
+
+- name: Generate Client Ticket on Master
+  become: yes
+  command: icinga2 pki ticket --cn {{ ansible_fqdn }}
+  register: pki_ticket
+  delegate_to: "{{ groups['masters'][0] }}"
+  when: client_certificate.stat.exists is sameas false
+
+  # Todo: How can / will this work for nodes unable to connect
+  # directly to master?
+- name: Retrieve Public Certificate From Master
+  become: yes
+  command: >
+    icinga2 pki save-cert --key {{ i2_pki_path }}/{{ ansible_fqdn }}.key
+      --cert {{ i2_pki_file }}
+      --trustedcert {{ i2_pki_path }}/trusted_parent.crt
+      --host {{ hostvars[groups['masters'][0]]['ansible_fqdn'] }}
+  when: trusted_authority.stat.exists is sameas false
+
+- name: Create Host Certificate and set-up Node (Top-Down)
+  become: yes
+  command: >
+    icinga2 node setup --ticket {{ pki_ticket.stdout }}
+    --endpoint {{ hostvars[i2_peer_nodes[0]]['ansible_fqdn'] }}
+    --trustedcert {{ i2_pki_path }}/trusted_parent.crt
+    --zone {{ ansible_fqdn }}
+    --parent_zone {{ i2_zone }}
+    --parent_host {{ hostvars[i2_peer_nodes[0]]['ansible_fqdn'] }}
+    --accept-commands
+    --accept-config
+    --disable-confd
+  when: i2_connection_direction == 'top-down' and not client_certificate.stat.exists
+
+- name: Create Host Certificate and set-up Node (Bottom-Up)
+  become: yes
+  command: >
+    icinga2 node setup --ticket {{ pki_ticket.stdout }}
+    --endpoint {{ hostvars[groups['masters'][0]]['ansible_fqdn'] }},{{ hostvars[groups['masters'][0]]['ansible_facts']['default_ipv4']['address'] }},{{ i2_api_port }}
+    --trustedcert {{ i2_pki_path }}/trusted_parent.crt
+    --zone {{ ansible_fqdn }}
+    --parent_zone {{ i2_zone }}
+    --parent_host {{ hostvars[groups['masters'][0]]['ansible_fqdn'] }}
+    --accept-commands
+    --accept-config
+    --disable-confd
+  when: i2_connection_direction == 'bottom-up' and not client_certificate.stat.exists
+

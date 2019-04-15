@@ -1,0 +1,9 @@
+{% macro object(item) -%}
+{% import 'object_attributes.j2' as attributes %}
+
+{% for object_name, params in item.value.items() %}
+object {{ item.key }} "{{ object_name }}" {
+  {{ attributes.attrs(params) -}}
+}
+{% endfor %}
+{% endmacro %}

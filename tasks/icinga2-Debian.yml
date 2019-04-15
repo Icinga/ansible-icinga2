@@ -24,6 +24,6 @@
   become: yes
   apt:
     name: icinga2
-    state: present
+    state: latest
   notify: start icinga2
   when: i2_manage_package

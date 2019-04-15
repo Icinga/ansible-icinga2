@@ -1,0 +1,11 @@
+---
+- name: Icinga2 - Copy optional plug-ins into place
+  become: yes
+  copy:
+    src: "{{ item }}"
+    dest: "{{ i2_constants.PluginDir }}/"
+    owner: "{{ i2_user }}"
+    group: "{{ i2_group }}"
+    mode: 0755
+    backup: yes
+  loop: "{{ i2_plugins }}"

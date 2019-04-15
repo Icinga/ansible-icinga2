@@ -8,6 +8,10 @@ library "{{ library }}"
 
 {% for object_name, params in item.value.items() %}
 object {{ item.key }} "{{ object_name }}" {
-   {{ attributes.attrs(params) -}}
+{% set vars = params.pop('variables', None) %}
+{{ attributes.attrs(params) -}}
+{%- if vars is defined and vars is not none %}
+{{ attributes.attrs(vars, 'vars.') -}}
+{% endif -%}
 }
 {% endfor %}

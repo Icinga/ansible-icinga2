@@ -1,0 +1,39 @@
+---
+- name: Include distro-specific IDO tasks
+  include: icinga2-ido-Debian.yml
+  when: ansible_os_family == 'Debian'
+
+- name: Include distro-specific IDO tasks
+  include: icinga2-ido-RedHat.yml
+  when: ansible_os_family == 'RedHat'
+
+- name: Set up MySQL-compatible Database
+  become: yes
+  mysql_db:
+    config_file: "{{ mysql_defaults_file }}"
+    name: "{{ i2_ido_params.database }}"
+    state: present
+  notify: import ido schema
+
+- name: Ensure MySQL server is bound to public IP for HA setups
+  become: yes
+  lineinfile:
+    path: "{{ mysql_config_file }}"
+    regexp: '^bind-address'
+    line: "bind-address = {{ ansible_facts.default_ipv4.address }}"
+  when: groups['masters']|length > 1 and i2_ido_backend == 'mysql'
+  notify: restart mysqld
+
+- name: Create MySQL user for IDO
+  become: yes
+  mysql_user:
+    config_file: "{{ mysql_defaults_file }}"
+    name: "{{ i2_ido_params.user }}"
+    password: "{{ i2_ido_params.password }}"
+    host: "{{ hostvars[item].ansible_facts.default_ipv4.address }}"
+    priv: 'icinga.*:SELECT,INSERT,UPDATE,DELETE,DROP,CREATE VIEW,INDEX,EXECUTE'
+    state: present
+  loop: "{{ groups['masters'] }}"
+  when: i2_config_master and i2_ido_backend == 'mysql'
+  notify: restart icinga2
+

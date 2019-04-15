@@ -1,0 +1,121 @@
+---
+- name: Icinga 2 master - Check if Public Key Infrastructure has been initialized
+  become: yes
+  stat:
+    path: "{{ i2_ca_file }}"
+  register: ca_certificate
+
+- name: Icinga 2 master - Create Certificate Authority
+  become: yes
+  command: icinga2 pki new-ca
+  when: (groups['masters']|length == 1 or i2_config_master) and not ca_certificate.stat.exists
+
+- name: Icinga 2 master - Synchronize CA Cert between masters (Fetch)
+  become: yes
+  fetch:
+    src: "{{ i2_ca_path }}/{{ item }}"
+    dest: /tmp/trusted_certs/
+    flat: yes
+  loop: ['ca.crt', 'ca.key']
+  when: (groups['masters']|length > 1 and i2_config_master)
+
+- name: Icinga 2 master - Synchronize CA between masters (Ensure ca directory exists)
+  become: yes
+  file:
+    path: "{{ i2_ca_path }}"
+    state: directory
+    owner: "{{ i2_user }}"
+    group: "{{ i2_group }}"
+    mode: 0700
+  when: (groups['masters']|length > 1 and not i2_config_master) and not ca_certificate.stat.exists
+
+- name: Icinga 2 master - Synchronize CA between masters (Copy)
+  become: yes
+  copy:
+    src: /tmp/trusted_certs/{{ item }}
+    dest: "{{ i2_ca_path }}/"
+    owner: "{{ i2_user }}"
+    group: "{{ i2_group }}"
+    mode: 0644
+  loop: ['ca.crt', 'ca.key']
+  when: (groups['masters']|length > 1 and not i2_config_master) and not ca_certificate.stat.exists
+
+- name: Icinga 2 master - Initialize Certificate Directory
+  become: yes
+  file:
+    path: "{{ i2_pki_path }}"
+    state: directory
+    owner: "{{ i2_user }}"
+    group: "{{ i2_group }}"
+    mode: 0700
+
+- name: Icinga 2 master - Create Host Certificate
+  become: yes
+  command: >
+    icinga2 pki new-cert
+    --cn {{ ansible_fqdn }}
+    --key {{ i2_pki_path }}/{{ ansible_fqdn }}.key
+    --csr {{ i2_pki_path }}/{{ ansible_fqdn }}.csr
+    --cert {{ i2_pki_path }}/{{ ansible_fqdn }}.crt
+  when: client_certificate.stat.exists is sameas false
+
+- name: Icinga 2 master - Sign Host Certificate
+  become: yes
+  command: >
+    icinga2 pki sign-csr
+    --csr {{ i2_pki_path }}/{{ ansible_fqdn }}.csr
+    --cert {{ i2_pki_path }}/{{ ansible_fqdn }}.crt
+  when: client_certificate.stat.exists is sameas false
+
+- name: Icinga 2 master - Link CA into PKI path
+  become: yes
+  file:
+    dest: "{{ i2_pki_path }}/ca.crt"
+    src: "{{ i2_ca_path }}/ca.crt"
+    state: link
+    owner: "{{ i2_user }}"
+    group: "{{ i2_group }}"
+  when: client_certificate.stat.exists is sameas false
+  notify:
+    - restart icinga2
+
+- name: Icinga 2 master - Create Global-Templates zone directory
+  become: yes
+  file:
+    name: "{{ i2_zones_dir }}/global-templates"
+    state: directory
+    owner: "{{ i2_user }}"
+    group: "{{ i2_group }}"
+    mode: 0755
+  when: groups['masters']|length == 1 or i2_config_master
+
+- name: Icinga 2 master - Create master zone directory
+  become: yes
+  file:
+    name: "{{ i2_zones_dir }}/{{ i2_zone }}"
+    state: directory
+    owner: "{{ i2_user }}"
+    group: "{{ i2_group }}"
+    mode: 0755
+  when: groups['masters']|length == 1 or i2_config_master
+
+- name: Icinga 2 master - Create Api-Users config file
+  become: yes
+  blockinfile:
+    create: yes
+    dest: "{{ i2_zones_dir }}/{{ i2_zone }}/api-users.conf"
+    marker: "// {mark} Ansible managed block for {{ item.key }}"
+    content: "{{ lookup('template', 'api_users_fragment.j2') }}"
+    owner: "{{ i2_user }}"
+    group: "{{ i2_group }}"
+    mode: 0644
+    directory_mode: 0755
+  with_dict: "{{ i2_api_users }}"
+  when: i2_api_users is defined
+  notify:
+    - reload icinga2
+
+# If e.g. the api handler was enabled, we need to restart icinga2 before we can
+# connect from a client
+- name: restart Icinga2 now
+  meta: flush_handlers

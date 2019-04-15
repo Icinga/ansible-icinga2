@@ -4,7 +4,7 @@
 
 Ansible role to install and configure [Icinga 2](https://www.icinga.com/products/icinga-2/).
 
-# This Role is in development stage 
+# This Role is in development stage
 
 ## Setup
 
@@ -15,8 +15,8 @@ The role is supported on the following platforms:
 
 * Icinga 2 >= v2.8
 * Ubuntu: 16.04, 18.04
-* Debian: 8,9
-* CeontOS/RHEL: 6,7
+* Debian: 8, 9
+* CentOS/RHEL: 6, 7
 
 Other operating systems or versions may work but have not been tested.
 
@@ -65,6 +65,9 @@ You may choose to use your own or the systems default repositories. Repository m
     - [Variable: i2_user](#variable-i2_user)
     - [Variable: i2_group](#variable-i2_group)
     - [Variable: i2_lib_dir](#variable-i2_lib_dir)
+- [**Feature Usage**](#feature-usage)
+    - [Variable: i2_custom_features](#variable-i2_custom_features)
+    - [Variable: i2_remove_unmanaged_features](#variable-i2_remove_unmanaged_features)
 - [**Handlers**](#handlers)
     - [Handler: start icinga2](#handler-start-icinga2)
     - [Handler: reload icinga2](#handler-reload-icinga2)
@@ -186,7 +189,7 @@ vars:
 
 #### Variable: `i2_remove_unmanaged_features`
 The variable `i2_remove_unmanaged_features` change the behaviour of the feature handling.
-It will remove all **unmanged** `.conf` files from the directory `/etc/icinga2/features-enabled` and let you manage only your defined features.
+It will remove all **unmanaged** `.conf` files from the directory `/etc/icinga2/features-enabled` and let you manage only your defined features. Defaults to `false`.
 
 ### Handlers
 

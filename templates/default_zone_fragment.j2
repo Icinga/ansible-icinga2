@@ -1,0 +1,15 @@
+// BEGIN Ansible managed block for {{ inventory_hostname }} (localhost)"
+object Endpoint NodeName {
+}
+
+{#
+ # In a multi-master set-up, the masters' own zone must include both endpoints
+ # On an endpoint, the Zone definition must include a parent reference, but
+ # not unless such a zone also exists.
+ #}
+object Zone ZoneName {
+  endpoints = [ NodeName{%- if i2_peer_nodes is defined and i2_master -%},
+  {{ i2_peer_nodes|map('constants')|join(', ') }} {%- endif -%} ]
+  {% if i2_master is sameas false -%}parent = {{ i2_zone|icinga_vars }}{% endif %}
+}
+// END Ansible managed block for {{ inventory_hostname }} (localhost)"

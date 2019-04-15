@@ -1,0 +1,14 @@
+object Endpoint "{{ item }}" {
+{% if i2_connection_direction == 'top-down' %}
+  host = "{{ hostvars[item].ansible_facts.default_ipv4.address }}"
+  port = "{{ i2_api_port }}"
+{% endif %}
+}
+
+object Zone "{{ item }}" {
+{% if hostvars[item].i2_zone is defined and hostvars[item].i2_zone != item %}
+  parent = "{{ hostvars[item].i2_zone }}"
+{% endif %}
+
+  endpoints = [ "{{ item }}" ]
+}

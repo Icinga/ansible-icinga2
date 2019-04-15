@@ -1,0 +1,15 @@
+---
+- name: Debian - Install IDO Module and Dependencies
+  become: yes
+  apt:
+    name:
+      - python-mysqldb
+      - python3-pymysql
+      - icinga2-ido-mysql
+      - mariadb-server
+    state: present
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+  when: i2_manage_package
+  tags:
+    - install

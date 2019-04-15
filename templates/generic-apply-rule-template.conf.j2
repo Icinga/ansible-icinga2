@@ -1,0 +1,30 @@
+// {{ ansible_managed }}
+{% import 'object_attributes.j2' as attributes %}
+
+{% set target = item.value.pop('target', None) %}
+{% set iterator = item.value.pop('iterator', None) %}
+{% set operators = item.value.pop('var_operators', None) %}
+
+{% for rule_name, params in item.value.items() %}
+apply {{ item.key }} "{{ rule_name }}" {% if iterator is defined and iterator is not none -%}
+for ({{ iterator }})
+{%- endif -%}{% if target in ['Host', 'Service'] %} to {{ target }} {% endif -%}
+{
+{% if params.attributes is defined -%}
+{{ attributes.attrs(params.attributes) -}}
+{%- endif %}
+{% if params.variables is defined -%}
+{{ attributes.attrs(params.variables, 'vars.') -}}
+{%- endif %}
+{% if params.attributes is not defined and params.variables is not defined %}
+{{ attributes.attrs(params) -}}
+{% endif %}
+{% if (iterator is defined and iterator is not none)
+  and (operators is defined and operators is not none and operators|length)
+-%}
+{%- for operator, param in operators.items() %}
+vars {{ operator }} {{ param }}
+{% endfor -%}
+{% endif -%}
+}
+{% endfor %}
