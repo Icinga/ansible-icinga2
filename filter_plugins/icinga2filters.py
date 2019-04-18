@@ -20,7 +20,8 @@ icinga2_constants = [
 
 def check_constants(value):
   '''
-  Quotes values that do not represent icinga2 constants
+  Quotes values that do not represent icinga2 constants or match
+  specific types or patterns, such as those representing host variables.
   '''
   if type(value) is int:
     return value
@@ -34,9 +35,9 @@ def check_constants(value):
 
 def check_key_format(key, prefix):
   """
-  Check if a key needs quoting.
+  Check if a key needs quoting or prefixing.
   E.g. attributes in CheckCommands that are actually flags ("--foo")
-  require this.
+  require to be quoted.
   """
   if prefix:
     return prefix + key
@@ -54,7 +55,6 @@ class FilterModule(object):
 
   def filters(self):
     return {
-      'constants': check_constants,
       'icinga_vars': check_constants,
       'icingakey': check_key_format,
     }

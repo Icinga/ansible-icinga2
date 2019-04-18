@@ -23,7 +23,7 @@
 {% macro eval_value(orig_key, val, prefix="") -%}
 {% set key = prefix + orig_key if prefix is defined %}
 {% if val is iterable and orig_key in ['command'] -%}
-  {{ key }} = [ {{ val | map('constants') | join(' + ') }} ]
+  {{ key }} = [ {{ val | map('icinga_vars') | join(' + ') }} ]
 {% elif orig_key in ['import'] -%}
 {% for template in val if val is not string -%}
   {{ key }} "{{ template }}"
@@ -31,7 +31,7 @@
 {% elif val is iterable and orig_key in ['assign', 'ignore'] -%}
   {{ key }} where {{ val | join(' && ') }}
 {% elif val is iterable and val is not string -%}
-  {{ key }} = [ {{ val | map('constants') | join(', ') }} ]
+  {{ key }} = [ {{ val | map('icinga_vars') | join(', ') }} ]
 {% elif val | bool is sameas false and val | string | lower == "false" -%}
   {{ key }} = false
 {% elif val is defined and val is sameas true -%}

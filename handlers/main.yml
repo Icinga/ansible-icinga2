@@ -20,7 +20,7 @@
   service:
     name: mysql
     state: restarted
-  when: i2_manage_service and i2_ido_backend == 'mysql'
+  when: i2_setup_ido and i2_ido_backend == 'mysql'
 
 - name: reload icinga2
   become: yes

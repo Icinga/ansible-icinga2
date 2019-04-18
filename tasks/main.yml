@@ -5,10 +5,10 @@
     - feature-handler
     - config
 
-# - name: Set up Icinga Repositories and install packages
-#   include: icinga2.yml
-#   tags:
-#     - install
+- name: Set up Icinga Repositories and install packages
+  include: icinga2.yml
+  tags:
+    - install
 
 - name: Create basic Icinga2 configuration
   include: icinga2-config.yml
@@ -40,24 +40,24 @@
   tags:
     - node
 
-# - name: Set up Icinga Templates, Objects and Apply Rules
-#   import_tasks: icinga2-objects.yml
-#   when: i2_config_master
-#   tags:
-#     - config
-#     - templates
-#     - objects
+- name: Set up Icinga Templates, Objects and Apply Rules
+  import_tasks: icinga2-objects.yml
+  when: i2_config_master
+  tags:
+    - config
+    - templates
+    - objects
 
-# - name: Copy any custom check scripts or plugins in place
-#   import_tasks: icinga2-plugins.yml
-#   when: i2_plugins|length > 0
-#   tags:
-#     - checks
-#     - scripts
+- name: Copy any custom check scripts or plugins in place
+  import_tasks: icinga2-plugins.yml
+  when: i2_plugins|length > 0
+  tags:
+    - checks
+    - scripts
 
-# - name: Make sure Icinga 2 is started
-#   service:
-#     name: icinga2
-#     state: started
-#     enabled: yes
-#   when: i2_manage_service
+- name: Make sure Icinga 2 is started
+  service:
+    name: icinga2
+    state: started
+    enabled: yes
+  when: i2_manage_service
