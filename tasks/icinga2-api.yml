@@ -103,7 +103,7 @@
   become: yes
   blockinfile:
     create: yes
-    dest: "{{ i2_zones_dir }}/{{ i2_zone }}/api-users.conf"
+    dest: "{{ i2_confd }}/api-users.conf"
     marker: "// {mark} Ansible managed block for {{ item.key }}"
     content: "{{ lookup('template', 'api_users_fragment.j2') }}"
     owner: "{{ i2_user }}"

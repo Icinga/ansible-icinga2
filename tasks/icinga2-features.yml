@@ -31,7 +31,7 @@
 
 - name: Set Fact managed_features_files
   set_fact:
-    managed_feature_files: "{{ item.dest }}"
+    managed_feature_files: "{{ managed_feature_files|default([]) + [item.dest] }}"
   with_items: "{{ managed_features.results }}"
   when:
     - i2_remove_unmanaged_features

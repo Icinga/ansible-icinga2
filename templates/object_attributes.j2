@@ -1,42 +1,42 @@
-{% macro attrs(map, prefix="", exclude=[]) %}
+{% macro attrs(map, prefix="", operator="=", iterator=None) %}
   {% for k, v in map.items() %}
     {%- if v is mapping %}
-      {{ mapdict(k, v, prefix) | indent(width=2)}}
+      {{ mapdict(k, v, prefix, operator, iterator) | indent(width=2)}}
     {%- else %}
-      {{ eval_value(k, v, prefix) }}
+      {{ eval_value(k, v, prefix, operator, iterator) }}
     {% endif %}
   {% endfor %}
 {% endmacro %}
 
-{% macro mapdict(key, dictionary, prefix="") %}
-{{ key|icingakey(prefix) }} = {
+{% macro mapdict(key, dictionary, prefix="", operator="=", iterator=None) %}
+{{ key|icingakey(prefix) }} {{ operator }} {
 {% for subkey, value in dictionary.items() -%}
 {% if value is mapping -%}
-{{ mapdict(subkey, value) | indent(width=2) }}
+{{ mapdict(subkey, value, "", operator, iterator) | indent(width=2) }}
 {% else -%}
-{{ eval_value(subkey, value) }}
+{{ eval_value(subkey, value, "", operator, iterator) }}
 {% endif -%}
 {% endfor -%}
 }
 {% endmacro %}
 
-{% macro eval_value(orig_key, val, prefix="") -%}
+{% macro eval_value(orig_key, val, prefix="", operator="=", iterator=None) -%}
 {% set key = prefix + orig_key if prefix is defined %}
-{% if val is iterable and orig_key in ['command'] -%}
+{% if val is iterable and val is not string and orig_key in ['command'] -%}
   {{ key }} = [ {{ val | map('icinga_vars') | join(' + ') }} ]
 {% elif orig_key in ['import'] -%}
-{% for template in val if val is not string -%}
-  {{ key }} "{{ template }}"
-{% endfor %}
+  {% for template in val if val is not string -%}
+    {{ key }} "{{ template }}"
+  {% endfor %}
 {% elif val is iterable and orig_key in ['assign', 'ignore'] -%}
   {{ key }} where {{ val | join(' && ') }}
 {% elif val is iterable and val is not string -%}
   {{ key }} = [ {{ val | map('icinga_vars') | join(', ') }} ]
 {% elif val | bool is sameas false and val | string | lower == "false" -%}
   {{ key }} = false
-{% elif val is defined and val is sameas true -%}
+{% elif val is defined and val | bool is sameas true -%}
   {{ key }} = true
 {% else -%}
-  {{ key }} = {{ val|icinga_vars }}
+  {{ key }} {{ operator }} {{ val|icinga_vars(iterator) }}
 {% endif -%}
 {% endmacro -%}

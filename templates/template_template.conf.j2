@@ -2,6 +2,9 @@
 {% import 'object_attributes.j2' as attributes %}
 
 {% for object_name, params in item.value.items() %}
+
+{% set operators = params.pop('var_operators', None) %}
+
 template {{ item.key }} "{{ object_name }}" {
 {% if params.attributes is defined -%}
 {{ attributes.attrs(params.attributes) -}}
@@ -9,6 +12,9 @@ template {{ item.key }} "{{ object_name }}" {
 {% if params.variables is defined -%}
 {{ attributes.attrs(params.variables, 'vars.') -}}
 {% endif -%}
+{% if params.attributes is not defined and params.variables is not defined %}
+{{ attributes.attrs(params) -}}
+{% endif %}
 {% if params.conditionals is defined -%}
 {% for conditional in params.conditionals %}
 {% set condition = conditional.pop('condition') %}
@@ -16,6 +22,11 @@ if ({{ condition }}) {
   {{ attributes.attrs(conditional) -}}
 }
 {% endfor %}
+{% endif -%}
+{% if operators is defined and operators is not none and operators|length -%}
+{%- for operator, params in operators.items() %}
+{{ attributes.attrs({ 'vars': params }, '', operator) }}
+{% endfor -%}
 {% endif -%}
 }
 {% endfor %}

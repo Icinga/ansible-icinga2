@@ -1,11 +1,11 @@
 ---
-i2_manage_repository: true
+i2_manage_repository: yes
 i2_apt_key: "https://packages.icinga.com/icinga.key"
 i2_apt_url: "deb http://packages.icinga.com/{{ ansible_lsb.id|lower }} icinga-{{ ansible_distribution_release }} main"
 i2_yum_key: "https://packages.icinga.com/icinga.key"
 i2_yum_url: "http://packages.icinga.com/epel/$releasever/release/"
-i2_manage_package: true
-i2_manage_service: true
+i2_manage_package: yes
+i2_manage_service: yes
 i2_setup_ido: no
 i2_keep_backups: yes
 i2_confd:
@@ -20,10 +20,13 @@ i2_include_plugins:
 i2_custom_constants: {}
 i2_custom_features: {}
 i2_custom_templates: {}
+i2_custom_master_templates: {}
 i2_custom_objects: {}
 i2_custom_apply_rules: {}
 
-i2_remove_unmanaged_features: false
+i2_remove_unmanaged_features: no
+i2_remove_unmanaged_objects: no
+i2_remove_unmanaged_objects_in_zone: no
 
 i2_api_port: 5665
 i2_connection_direction: 'top-down'

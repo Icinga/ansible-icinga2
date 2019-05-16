@@ -8,6 +8,15 @@
     group: "{{ i2_group }}"
   with_items: "{{ i2_confd }}"
 
+- name: Remove default config from conf.d directory
+  become: yes
+  file:
+    dest: "{{ i2_conf_dir }}/hosts.conf"
+    state: directory
+    owner: "{{ i2_user }}"
+    group: "{{ i2_group }}"
+  with_items: "{{ i2_confd }}"
+
 - name: Manage main Icinga 2 configuration
   become: yes
   template:
@@ -124,7 +133,7 @@
   # when: also nodes directly connecting to master (groups['tomaster'])
 
 # WARNING: "agents" doesn't exist in ACT hosts inventory
-- name: Set-up remote Zones and Endpoints on Satellites
+- name: Icinga2 – Set-up remote Zones and Endpoints on Satellites
   become: yes
   blockinfile:
     create: yes

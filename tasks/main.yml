@@ -5,40 +5,40 @@
     - feature-handler
     - config
 
-- name: Set up Icinga Repositories and install packages
-  include: icinga2.yml
-  tags:
-    - install
+# - name: Set up Icinga Repositories and install packages
+#   include: icinga2.yml
+#   tags:
+#     - install
 
-- name: Create basic Icinga2 configuration
-  include: icinga2-config.yml
-  tags:
-    - config
+# - name: Create basic Icinga2 configuration
+#   include: icinga2-config.yml
+#   tags:
+#     - config
 
-- name: Set up Icinga2 IDO
-  import_tasks: icinga2-ido-mysql.yml
-  when: i2_master and i2_setup_ido
-  tags:
-    - ido
-    - feature-handler
+# - name: Set up Icinga2 IDO
+#   import_tasks: icinga2-ido-mysql.yml
+#   when: i2_master and i2_setup_ido
+#   tags:
+#     - ido
+#     - feature-handler
 
-- name: Enable Icinga2 features
-  include_tasks: icinga2-features.yml
-  when: i2_features|flatten|length > 0
-  tags:
-    - feature-handler
+# - name: Enable Icinga2 features
+#   include_tasks: icinga2-features.yml
+#   when: i2_features|flatten|length > 0
+#   tags:
+#     - feature-handler
 
-- name: Set up Icinga2 PKI
-  import_tasks: icinga2-api.yml
-  when: i2_master
-  tags:
-    - api
+# - name: Set up Icinga2 PKI
+#   import_tasks: icinga2-api.yml
+#   when: i2_master
+#   tags:
+#     - api
 
-- name: Set up Icinga2 Nodes
-  import_tasks: icinga2-node-config.yml
-  when: i2_master == false
-  tags:
-    - node
+# - name: Set up Icinga2 Nodes
+#   import_tasks: icinga2-node-config.yml
+#   when: i2_master == false
+#   tags:
+#     - node
 
 - name: Set up Icinga Templates, Objects and Apply Rules
   import_tasks: icinga2-objects.yml
@@ -48,16 +48,16 @@
     - templates
     - objects
 
-- name: Copy any custom check scripts or plugins in place
-  import_tasks: icinga2-plugins.yml
-  when: i2_plugins|length > 0
-  tags:
-    - checks
-    - scripts
+# - name: Copy any custom check scripts or plugins in place
+#   import_tasks: icinga2-plugins.yml
+#   when: i2_plugins|length > 0
+#   tags:
+#     - checks
+#     - scripts
 
-- name: Make sure Icinga 2 is started
-  service:
-    name: icinga2
-    state: started
-    enabled: yes
-  when: i2_manage_service
+# - name: Make sure Icinga 2 is started
+#   service:
+#     name: icinga2
+#     state: started
+#     enabled: yes
+#   when: i2_manage_service

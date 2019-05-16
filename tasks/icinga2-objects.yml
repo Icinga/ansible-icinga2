@@ -9,30 +9,58 @@
     mode: 0755
   loop: "{{ groups['satellites'] }}"
 
-- name: Generate Icinga2 Templates
+- name: Collect Icinga2 zones
+  set_fact:
+    used_zones: "{{ [ i2_global_dir ] + [ i2_zones_dir + '/' + hostvars[item].ansible_fqdn ] }}"
+  loop: "{{ groups['satellites'] }}"
+#   when: (each zone/satellite(?) should be able to define whether objects are to be managed or not)
+#     - hostvars[item]['i2_remove_unmanaged_objects_in_zone']
+
+- name: Icinga2 – Collect all existing objects
+  become: yes
+  find:
+    paths: "{{ used_zones }}"
+    patterns: '^(?!endpoints).*.conf'
+    use_regex: yes
+    file_type: any
+  register: existing_objects
+  when:
+    - i2_remove_unmanaged_objects
+
+- name: Icinga2 – Set fact existing objects
+  set_fact:
+    existing_files: "{{ existing_files|default([]) + [ item.path ] }}"
+  loop: "{{ existing_objects.files }}"
+  when:
+    - i2_remove_unmanaged_objects
+
+- name: Icinga2 – Generate Master Templates
   become: yes
   template:
     src: template_template.conf.j2
-    dest: "{{ i2_global_dir }}/{{ item.key|lower }}_templates.conf"
+    dest: "{{ i2_zones_dir }}/{{ i2_zone }}/{{ item.key|lower }}-templates.conf"
+    owner: "{{ i2_user }}"
+    group: "{{ i2_group }}"
+    mode: 0644
+  with_dict: "{{ i2_master_templates }}"
+  register: managed_master_templates
+  notify:
+    - reload icinga2
+
+- name: Icinga2 – Generate global Templates
+  become: yes
+  template:
+    src: template_template.conf.j2
+    dest: "{{ i2_global_dir }}/{{ item.key|lower }}-templates.conf"
     owner: "{{ i2_user }}"
     group: "{{ i2_group }}"
     mode: 0644
   with_dict: "{{ i2_templates }}"
-  register: managed_templates
+  register: managed_global_templates
   notify:
     - reload icinga2
 
-# - name: collect all enabled features
-#   become: yes
-#   find:
-#     paths: "{{ i2_features_enabled_dir }}/"
-#     patterns: '*.conf'
-#     file_type: any
-#   register: enabled_features
-#   when:
-#     - i2_remove_unmanaged_features
-
-- name: Generate Icinga2 objects for global-templates
+- name: Icinga2 – Generate global Objects
   become: yes
   template:
     src: generic-object-template.conf.j2
@@ -45,43 +73,7 @@
   notify:
     - reload icinga2
 
-# - name: set fact enabled_files
-#   set_fact:
-#     enabled_files: "{{ enabled_files|default([]) + [ item.path ] }}"
-#   loop: "{{ enabled_features.files }}"
-#   when:
-#     - i2_remove_unmanaged_features
-
-# - name: Set Fact managed_object_files
-#   set_fact:
-#     managed_object_files: "{{ item.dest }}"
-#   with_items: "{{ managed_global_objects.results }}"
-#   when:
-#     - i2_remove_unmanaged_objects
-
-# - name: removing unmanaged objects
-#   file:
-#     path: "{{ item }}"
-#     state: absent
-#   with_items: "{{ enabled_files|default([]) }}"
-#   when:
-#     - item not in managed_object_files and i2_remove_unmanaged_objects
-
-# How to create objects that will be in the master zone?
-- name: Generate zone-specific Icinga2 commands
-  become: yes
-  template:
-    src: commands-template.conf.j2
-    dest: "{{ i2_zones_dir }}/{{ hostvars[item].ansible_fqdn }}/commands.conf"
-    owner: "{{ i2_user }}"
-    group: "{{ i2_group }}"
-    mode: 0644
-  loop: "{{ groups['satellites'] }}"
-  register: managed_zone_commands
-  notify:
-    - reload icinga2
-
-- name: Generate global Icinga2 Apply Rules
+- name: Icinga2 – Generate global Apply Rules
   become: yes
   template:
     src: generic-apply-rule-template.conf.j2
@@ -94,7 +86,22 @@
   notify:
     - reload icinga2
 
-- name: Icinga2 - Create host definitions in their respective zones on the master
+# How to create objects that will be in the master zone?
+# loop through satellites and masters? (but the zone name for the master is not its fqdn!)
+- name: Icinga2 - Create Commands in Satellite Zones
+  become: yes
+  template:
+    src: commands-template.conf.j2
+    dest: "{{ i2_zones_dir }}/{{ hostvars[item].ansible_fqdn }}/commands.conf"
+    owner: "{{ i2_user }}"
+    group: "{{ i2_group }}"
+    mode: 0644
+  loop: "{{ groups['satellites'] }}"
+  register: managed_zone_commands
+  notify:
+    - reload icinga2
+
+- name: Icinga2 - Create zone-specific Hosts
   become: yes
   template:
     src: host_template.conf.j2
@@ -103,6 +110,28 @@
     group: "{{ i2_group }}"
     mode: 0644
   loop: "{{ groups['all'] }}"
-  register: managed_host_definitions
+  register: managed_zone_hosts
   notify:
     - reload icinga2
+
+- name: Icinga2 – Set fact managed objects
+  set_fact:
+    managed_objects: "{{ managed_master_templates.results + managed_global_templates.results + managed_global_objects.results + managed_global_apply_rules.results + managed_zone_commands.results + managed_zone_hosts.results }}"
+  when:
+    - i2_remove_unmanaged_objects
+
+- name: Icinga2 – Set fact managed object files
+  set_fact:
+    managed_object_files: "{{ managed_object_files|default([]) + [item.dest] }}"
+  loop: "{{ managed_objects }}"
+  when:
+    - i2_remove_unmanaged_objects
+
+- name: Icinga2 – Removing unmanaged objects
+  become: yes
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items: "{{ existing_files|default([]) }}"
+  when:
+    - item not in managed_object_files and i2_remove_unmanaged_objects
