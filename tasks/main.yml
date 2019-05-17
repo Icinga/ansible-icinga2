@@ -28,7 +28,7 @@
   tags:
     - feature-handler
 
-- name: Set up Icinga2 PKI
+- name: Set up Icinga2 API and PKI
   import_tasks: icinga2-api.yml
   when: i2_master
   tags:
@@ -36,7 +36,7 @@
 
 - name: Set up Icinga2 Nodes
   import_tasks: icinga2-node-config.yml
-  when: i2_master == false
+  when: not i2_master and groups[i2_master_group] is defined
   tags:
     - node
 
@@ -49,8 +49,8 @@
     - objects
 
 - name: Copy any custom check scripts or plugins in place
-  import_tasks: icinga2-plugins.yml
-  when: i2_plugins|length > 0
+  import_tasks: icinga2-scripts.yml
+  when: i2_custom_scripts|length
   tags:
     - checks
     - scripts

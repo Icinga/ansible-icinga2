@@ -18,9 +18,8 @@ galaxy_info:
       versions:
         - 16.04
         - 18.04
-  categories:
-    - system
   galaxy_tags:
+    - system
     - monitoring
     - icinga
     - icinga2

@@ -25,7 +25,7 @@
   when:
     - i2_remove_unmanaged_objects
 
-- name: Icinga2 – Set fact existing objects
+- name: Icinga2 – Set fact Existing-Objects
   set_fact:
     existing_files: "{{ existing_files|default([]) + [ item.path ] }}"
   loop: "{{ existing_objects.files }}"
@@ -112,7 +112,12 @@
 
 - name: Icinga2 – Set fact managed objects
   set_fact:
-    managed_objects: "{{ managed_master_templates.results + managed_global_templates.results + managed_global_objects.results + managed_global_apply_rules.results + managed_zone_commands.results + managed_zone_hosts.results }}"
+    managed_objects: "{{ managed_master_templates.results
+    + managed_global_templates.results
+    + managed_global_objects.results
+    + managed_global_apply_rules.results
+    + managed_zone_commands.results
+    + managed_zone_hosts.results }}"
   when:
     - i2_remove_unmanaged_objects
 

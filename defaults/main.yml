@@ -23,6 +23,7 @@ i2_custom_templates: {}
 i2_custom_master_templates: {}
 i2_custom_objects: {}
 i2_custom_apply_rules: {}
+i2_custom_scripts: []
 
 i2_remove_unmanaged_features: no
 i2_remove_unmanaged_objects: no
@@ -31,8 +32,6 @@ i2_remove_unmanaged_objects_in_zone: no
 i2_master: no
 i2_satellite: no
 i2_config_master: no
-i2_confd: []
-i2_plugins: []
 i2_api_port: 5665
 i2_connection_direction: 'top-down'
 
@@ -52,5 +51,3 @@ i2_ido_params:
   user: icinga
   password: icinga
 i2_ido_mysql_schema: /usr/share/icinga2-ido-mysql/schema/mysql.sql
-
-i2_plugins: []

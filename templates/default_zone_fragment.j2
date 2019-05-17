@@ -3,9 +3,10 @@ object Endpoint NodeName {
 }
 
 {#
- # In a multi-master set-up, the masters' own zone must include both endpoints
- # On an endpoint, the Zone definition must include a parent reference, but
- # not unless such a zone also exists.
+ # In a multi-master set-up, the masters' own zone must include both endpoints.
+ #
+ # On Endpoints, the Zone definition must include a Parent reference, but
+ # not unless such a Zone also exists.
  #}
 object Zone ZoneName {
   endpoints = [ NodeName{%- if i2_peer_nodes is defined and i2_master -%},

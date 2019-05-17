@@ -86,11 +86,13 @@
     group: "{{ i2_group }}"
     mode: 0644
     backup: "{{ i2_keep_backups }}"
-  when: client_certificate.stat.exists
+  when: i2_master or client_certificate.stat.exists
   notify: reload icinga2
 
-# icinga2 node setup takes care of this for us on first-run
-- name: Set-up zones.conf on peers, satellites and agents
+# icinga2 node setup takes care of this for us on first-run, but only on nodes,
+# not on masters. We use the presence of PKI-related files to determine whether
+# this is a first run.
+- name: Set-up zones.conf on multi-master peers, satellites and agents
   become: yes
   blockinfile:
     create: yes
@@ -113,6 +115,7 @@
       object Zone "global-templates" {
         global = true
       }
+  when: i2_master or client_certificate.stat.exists
 
 - name: Icinga2 – Set-up remote Zones and Endpoints on Masters
   become: yes
