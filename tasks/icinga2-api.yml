@@ -53,18 +53,18 @@
   become: yes
   command: >
     icinga2 pki new-cert
-    --cn {{ ansible_fqdn }}
-    --key {{ i2_pki_path }}/{{ ansible_fqdn }}.key
-    --csr {{ i2_pki_path }}/{{ ansible_fqdn }}.csr
-    --cert {{ i2_pki_path }}/{{ ansible_fqdn }}.crt
+    --cn {{ i2_hostname }}
+    --key {{ i2_pki_path }}/{{ i2_hostname }}.key
+    --csr {{ i2_pki_path }}/{{ i2_hostname }}.csr
+    --cert {{ i2_pki_path }}/{{ i2_hostname }}.crt
   when: client_certificate.stat.exists is sameas false
 
 - name: Icinga 2 master - Sign Host Certificate
   become: yes
   command: >
     icinga2 pki sign-csr
-    --csr {{ i2_pki_path }}/{{ ansible_fqdn }}.csr
-    --cert {{ i2_pki_path }}/{{ ansible_fqdn }}.crt
+    --csr {{ i2_pki_path }}/{{ i2_hostname }}.csr
+    --cert {{ i2_pki_path }}/{{ i2_hostname }}.crt
   when: client_certificate.stat.exists is sameas false
 
 - name: Icinga 2 master - Link CA into PKI path
@@ -89,7 +89,7 @@
     mode: 0755
   when: groups['masters']|length == 1 or i2_config_master
 
-- name: Icinga 2 master - Create master zone directory
+- name: Icinga 2 master - Create Master Zone directory
   become: yes
   file:
     name: "{{ i2_zones_dir }}/{{ i2_zone }}"
@@ -115,7 +115,5 @@
   notify:
     - reload icinga2
 
-# If e.g. the api handler was enabled, we need to restart icinga2 before we can
-# connect from a client
 - name: restart Icinga2 now
   meta: flush_handlers

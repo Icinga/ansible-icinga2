@@ -1,5 +1,9 @@
 # This file does not run on master nodes
 ---
+- name: Icinga2 – Determine configuration master
+  set_fact:
+    configuration_master: groups[i2_master_group][0]
+
 - name: Check if Certificate Authority is available
   become: yes
   stat:
@@ -15,33 +19,31 @@
     group: "{{ i2_group }}"
     mode: 0700
 
-- name: Generate Client Ticket on Master
+- name: Icinga2 – Generate Client Ticket on Master
   become: yes
-  command: icinga2 pki ticket --cn {{ ansible_fqdn }}
+  command: icinga2 pki ticket --cn {{ i2_default_constants.NodeName }}
   register: pki_ticket
-  delegate_to: "{{ groups['masters'][0] }}"
+  delegate_to: "{{ configuration_master }}"
   when: client_certificate.stat.exists is sameas false
 
-  # Todo: How can / will this work for nodes unable to connect
-  # directly to master?
 - name: Retrieve Public Certificate From Master
   become: yes
   command: >
-    icinga2 pki save-cert --key {{ i2_pki_path }}/{{ ansible_fqdn }}.key
+    icinga2 pki save-cert --key {{ i2_pki_path }}/{{ i2_default_constants.NodeName }}.key
       --cert {{ i2_pki_file }}
       --trustedcert {{ i2_pki_path }}/trusted_parent.crt
-      --host {{ hostvars[groups['masters'][0]]['ansible_fqdn'] }}
+      --host {{ hostvars[configuration_master]['i2_default_constants.NodeName'] }}
   when: trusted_authority.stat.exists is sameas false
 
 - name: Create Host Certificate and set-up Node (Top-Down)
   become: yes
   command: >
     icinga2 node setup --ticket {{ pki_ticket.stdout }}
-    --endpoint {{ hostvars[i2_peer_nodes[0]]['ansible_fqdn'] }}
+    --endpoint {{ hostvars[i2_peer_nodes[0]]['i2_default_constants.NodeName'] }}
     --trustedcert {{ i2_pki_path }}/trusted_parent.crt
-    --zone {{ ansible_fqdn }}
+    --zone {{ i2_default_constants.NodeName }}
     --parent_zone {{ i2_zone }}
-    --parent_host {{ hostvars[i2_peer_nodes[0]]['ansible_fqdn'] }}
+    --parent_host {{ hostvars[i2_peer_nodes[0]]['i2_default_constants.NodeName'] }}
     --accept-commands
     --accept-config
     --disable-confd
@@ -51,13 +53,12 @@
   become: yes
   command: >
     icinga2 node setup --ticket {{ pki_ticket.stdout }}
-    --endpoint {{ hostvars[groups['masters'][0]]['ansible_fqdn'] }},{{ hostvars[groups['masters'][0]]['ansible_facts']['default_ipv4']['address'] }},{{ i2_api_port }}
+    --endpoint {{ hostvars[groups[configuration_master]['i2_default_constants.NodeName'] }},{{ hostvars[groups[configuration_master]['ansible_facts']['default_ipv4']['address'] }},{{ i2_api_port }}
     --trustedcert {{ i2_pki_path }}/trusted_parent.crt
-    --zone {{ ansible_fqdn }}
+    --zone {{ i2_default_constants.NodeName }}
     --parent_zone {{ i2_zone }}
-    --parent_host {{ hostvars[groups['masters'][0]]['ansible_fqdn'] }}
+    --parent_host {{ hostvars[groups[configuration_master]['i2_default_constants.NodeName'] }}
     --accept-commands
     --accept-config
     --disable-confd
   when: i2_connection_direction == 'bottom-up' and not client_certificate.stat.exists
-

@@ -36,4 +36,3 @@
   loop: "{{ groups['masters'] }}"
   when: i2_config_master and i2_ido_backend == 'mysql'
   notify: restart icinga2
-

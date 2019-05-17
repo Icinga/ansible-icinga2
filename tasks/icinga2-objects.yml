@@ -1,20 +1,18 @@
 ---
-- name: Create Icinga2 Zone Directories for Satellites
+- name: Icinga2 – Create Zone Directories for Satellites
   become: yes
   file:
-    name: "{{ i2_zones_dir }}/{{ hostvars[item].ansible_fqdn }}"
+    name: "{{ i2_zones_dir }}/{{ hostvars[item].i2_hostname }}"
     state: directory
     owner: "{{ i2_user }}"
     group: "{{ i2_group }}"
     mode: 0755
-  loop: "{{ groups['satellites'] }}"
+  loop: "{{ groups[i2_satellite_group] }}"
 
-- name: Collect Icinga2 zones
+- name: Icinga2 – Collect all Zones
   set_fact:
-    used_zones: "{{ [ i2_global_dir ] + [ i2_zones_dir + '/' + hostvars[item].ansible_fqdn ] }}"
-  loop: "{{ groups['satellites'] }}"
-#   when: (each zone/satellite(?) should be able to define whether objects are to be managed or not)
-#     - hostvars[item]['i2_remove_unmanaged_objects_in_zone']
+    used_zones: "{{ [ i2_global_dir ] + [ i2_zones_dir + '/' + hostvars[item].i2_hostname ] }}"
+  loop: "{{ groups[i2_satellite_group] }}"
 
 - name: Icinga2 – Collect all existing objects
   become: yes
@@ -86,26 +84,24 @@
   notify:
     - reload icinga2
 
-# How to create objects that will be in the master zone?
-# loop through satellites and masters? (but the zone name for the master is not its fqdn!)
-- name: Icinga2 - Create Commands in Satellite Zones
+- name: Icinga2 – Create Commands in Satellite Zones
   become: yes
   template:
     src: commands-template.conf.j2
-    dest: "{{ i2_zones_dir }}/{{ hostvars[item].ansible_fqdn }}/commands.conf"
+    dest: "{{ i2_zones_dir }}/{{ hostvars[item].i2_hostname }}/commands.conf"
     owner: "{{ i2_user }}"
     group: "{{ i2_group }}"
     mode: 0644
-  loop: "{{ groups['satellites'] }}"
+  loop: "{{ groups[i2_satellite_group] }}"
   register: managed_zone_commands
   notify:
     - reload icinga2
 
-- name: Icinga2 - Create zone-specific Hosts
+- name: Icinga2 – Create zone-specific Hosts
   become: yes
   template:
     src: host_template.conf.j2
-    dest: "{{ i2_zones_dir }}/{{ hostvars[item]['i2_zone'] }}/{{ hostvars[item]['ansible_fqdn'] }}.conf"
+    dest: "{{ i2_zones_dir }}/{{ hostvars[item]['i2_zone'] }}/{{ hostvars[item].i2_hostname }}.conf"
     owner: "{{ i2_user }}"
     group: "{{ i2_group }}"
     mode: 0644

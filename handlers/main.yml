@@ -36,10 +36,9 @@
     state: restarted
   when: i2_manage_service
 
-- name: reload icinga2 on master
+- name: Icinga2 – Reload service on master(s)
   become: yes
   service:
     name: icinga2
     state: reloaded
-  when: i2_manage_service
-  delegate_to: "{{ groups['masters'][0] }}"
+  when: i2_manage_service and i2_master

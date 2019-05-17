@@ -28,13 +28,18 @@ i2_remove_unmanaged_features: no
 i2_remove_unmanaged_objects: no
 i2_remove_unmanaged_objects_in_zone: no
 
+i2_master: no
+i2_satellite: no
+i2_config_master: no
+i2_confd: []
+i2_plugins: []
 i2_api_port: 5665
 i2_connection_direction: 'top-down'
-i2_master: no
-i2_config_master: no
-i2_secondary_master: no
-i2_satellite: no
-i2_zone: master
+
+i2_hostname: "{{ ansible_fqdn }}"
+i2_default_satellite_group: satellites
+i2_default_master_group: masters
+i2_default_agent_group: agents
 
 i2_ca_path: /var/lib/icinga2/ca
 i2_pki_path: /var/lib/icinga2/certs

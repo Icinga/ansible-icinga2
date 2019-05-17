@@ -114,7 +114,7 @@
         global = true
       }
 
-- name: Set-up remote Zones and Endpoints on Masters
+- name: Icinga2 – Set-up remote Zones and Endpoints on Masters
   become: yes
   blockinfile:
     create: yes
@@ -123,16 +123,10 @@
     dest: "{{ i2_conf_dir }}/zones.conf"
     marker: "// {mark} Ansible managed block for {{ item }} (satellite)"
     content: "{{ lookup('template', 'templates/zone_fragment.conf.j2') }}"
-  loop: "{{ groups['satellites'] }}"
+  loop: "{{ groups[i2_satellite_group] }}"
   when: i2_master
   notify: reload icinga2
-  # when: inventory_hostname in groups['masters']
-  # delegate_to: "{{ groups['masters'][0] }}"
-  # delegate_to: i2_config_master
-  # when: inventory_hostname in groups['satellites']
-  # when: also nodes directly connecting to master (groups['tomaster'])
 
-# WARNING: "agents" doesn't exist in ACT hosts inventory
 - name: Icinga2 – Set-up remote Zones and Endpoints on Satellites
   become: yes
   blockinfile:
@@ -142,10 +136,11 @@
     dest: "{{ i2_zones_dir }}/{{ hostvars[item].i2_zone }}/endpoints.conf"
     marker: "// {mark} Ansible managed block for {{ item }} (client)"
     content: "{{ lookup('template', 'templates/zone_fragment.conf.j2') }}"
-  loop: "{{ groups['agents'] }}"
+  loop: "{{ groups[i2_agent_group] }}"
   when: i2_satellite
   notify: reload icinga2
-  # when: inventory_hostname in groups['satelites']
-  # delegate_to: "{{ groups['masters'][0] }}"
-  # when: inventory_hostname in groups['agents']
-  # when: i2_master is sameas false and i2_satellite is sameas false
+
+# We want to use this from hostvars later on.
+- name: Icinga2 – Set hostname from defaults
+  set_fact:
+    i2_hostname: "{{ i2_hostname }}"
