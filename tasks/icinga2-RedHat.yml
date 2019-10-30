@@ -13,8 +13,8 @@
   become: True
   yum:
     name: epel-release
-    state: presen_package
-  when: i2_manage_repository
+    state: present
+  when: i2_manage_package
 
 - name: RedHat - Ensure icinga2 is installed
   become: yes
