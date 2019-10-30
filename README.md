@@ -106,24 +106,6 @@ The [ITL](https://www.icinga.com/docs/icinga2/latest/doc/10-icinga-template-libr
 pre-configured check commands. This variable defines what to include. Defaults to
 `["itl", "plugins", "plugins-contrib", "manubulon", "windows-plugins", "nscp"]`
 
-#### Variable: `i2_const_plugindir`
-Set `PluginDir` constant. Defaults to `{{ i2_lib_dir }}/nagios/plugins`.
-
-#### Variable: `i2_const_manubulonplugindir`
-Set `ManubulonPluginDir` constant. Defaults to `{{ i2_lib_dir }}/nagios/plugins`.
-
-#### Variable: `i2_const_plugincontribdir`
-Set `PluginContribDir` constant. Defualts to `{{ i2_lib_dir }}/nagios/plugins`.
-
-#### Variable: `i2_const_nodename`
-Set `NodeName` constant. Defaults to `{{ ansible_fqdn }}`.
-
-#### Variable: `i2_const_zonename`
-Set `ZoneName` constant. Defaults to `{{ ansible_fqdn }}`.
-
-#### Variable: `i2_const_ticketsalt`
-Set `TicketSalt` constant. Empty by default.
-
 #### Variable: `i2_custom_constants`
 Add custom constants to `constants.conf`. Must be a dictionary. Defaults to: `{}`
 
@@ -142,7 +124,7 @@ Default values of `i2_default_constants`:
 Example usage:
 ```yaml
   vars:
-    - i2_constants:
+    - i2_custom_constants:
         TicketSalt: "My ticket salt"
         Foo: "bar"
 ```
