@@ -12,10 +12,9 @@ script:
   - molecule test
 matrix:
   include:
-    - env: ANSIBLE_VERSION="2.5.9"
-    - env: ANSIBLE_VERSION="2.6.5"
-    - env: ANSIBLE_VERSION="2.7.0"
-    - env: ANSIBLE_VERSION="2.7.5"
+    - env: ANSIBLE_VERSION="2.7.14"
+    - env: ANSIBLE_VERSION="2.8.5"
+    - env: ANSIBLE_VERSION="2.9.0"
 branches:
   only:
     - master
