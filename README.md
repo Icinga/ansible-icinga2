@@ -4,7 +4,7 @@
 
 Ansible role to install and configure [Icinga 2](https://www.icinga.com/products/icinga-2/).
 
-# This Role is in development stage 
+# This Role is in development stage
 
 ## Setup
 
@@ -16,7 +16,7 @@ The role is supported on the following platforms:
 * Icinga 2 >= v2.8
 * Ubuntu: 16.04, 18.04
 * Debian: 8,9
-* CeontOS/RHEL: 6,7
+* CentOS/RHEL: 6,7
 
 Other operating systems or versions may work but have not been tested.
 
@@ -53,6 +53,7 @@ You may choose to use your own or the systems default repositories. Repository m
     - [Variable: i2_manage_repository](#variable-i2_manage_repository)
     - [Variable: i2_manage_package](#variable-i2_manage_package)
     - [Variable: i2_manage_service](#variable-i2_manage_service)
+    - [Variable: i2_manage_epel](#variable-i2_manage_epel)
     - [Variable: i2_apt_key](#variable-i2_apt_key)
     - [Variable: i2_apt_url](#variable-i2_apt_url)
     - [Variable: i2_i2_yum_key](#variable-i2_yum_key)
@@ -79,6 +80,9 @@ Whether to install packages or not. Defaults to `true`.
 
 #### Variable: `i2_manage_service`
 Whether to start, restart and reload the Icinga 2 on changes or not. Defaults to `true`.
+
+#### Variable: `i2_manage_epel`
+Whether to install epel repository on RedHat, needed for the dependency against libboost. If managed in an external role it can be disabled. Defaults to `true`.
 
 #### Variable: `i2_apt_key`
 GPG key used to verify packages on APT based system. The key will be imported. Defaults to
