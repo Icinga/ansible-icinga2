@@ -1,5 +1,5 @@
 {% macro attrs(map, exclude=[]) %}
-{% for k, v in map.iteritems() %}
+{% for k, v in map.items() %}
 {%- if v is mapping %}
 {{ mapdict(k,v) | indent(width=2)}}
 {%- else %}
@@ -10,7 +10,7 @@
 
 {% macro mapdict(key,dictionary) %}
 {{ key }} = {
-{% for i, w in dictionary.iteritems() %}
+{% for i, w in dictionary.items() %}
 {%- if w is mapping %}
 {{ mapdict(i,w) | indent(width=2)}}
 {%- else %}
