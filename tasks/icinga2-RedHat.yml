@@ -9,6 +9,13 @@
     gpgcheck: yes
   when: i2_manage_repository
 
+- name: RedHat - Add Epel repository
+  become: yes
+  yum:
+    name: epel-release.noarch
+    state: present
+  when: i2_manage_epel
+
 - name: RedHat - Ensure icinga2 is installed
   become: yes
   yum:
