@@ -4,7 +4,7 @@
 
 Ansible role to install and configure [Icinga 2](https://www.icinga.com/products/icinga-2/).
 
-# This Role is in development stage 
+# This Role is in development stage
 
 ## Setup
 
@@ -52,6 +52,7 @@ You may choose to use your own or the systems default repositories. Repository m
 - [**Variables**](#variables)
     - [Variable: i2_manage_repository](#variable-i2_manage_repository)
     - [Variable: i2_manage_package](#variable-i2_manage_package)
+    - [Variable: i2_manage_package](#variable-i2_manage_epel)
     - [Variable: i2_manage_service](#variable-i2_manage_service)
     - [Variable: i2_apt_key](#variable-i2_apt_key)
     - [Variable: i2_apt_url](#variable-i2_apt_url)
@@ -76,6 +77,9 @@ Whether to add the official [Icinga Repository](https://packages.icinga.com/) to
 
 #### Variable: `i2_manage_package`
 Whether to install packages or not. Defaults to `true`.
+
+#### Variable: `i2_manage_epel`
+Whether to install the EPEL release package. Defaults to `true`.
 
 #### Variable: `i2_manage_service`
 Whether to start, restart and reload the Icinga 2 on changes or not. Defaults to `true`.

@@ -10,11 +10,11 @@
   when: i2_manage_repository
 
 - name: RedHat - Ensure EPEL is enabled
-  become: True
+  become: yes
   yum:
     name: epel-release
     state: present
-  when: i2_manage_package
+  when: i2_manage_epel
 
 - name: RedHat - Ensure icinga2 is installed
   become: yes
