@@ -180,8 +180,8 @@ vars:
   - i2_custom_features:
     ApiListener:                #ObjectType
       api:                      #ObjectName
-        accept_command: true    #ObjectAttribute
-        accept_config: true     #ObjectAttribute
+        accept_command:" true"  #ObjectAttribute
+        accept_config: "true"   #ObjectAttribute
     GraphiteWriter:
       graphite:
         host: "127.0.0.1"
