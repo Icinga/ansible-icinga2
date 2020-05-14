@@ -1,0 +1,46 @@
+#jinja2: lstrip_blocks: "True", trim_blocks: "True"
+// {{ ansible_managed }}
+
+object Endpoint NodeName {
+}
+
+object Zone ZoneName {
+  endpoints = [ NodeName ]
+  {% for zone in i2_zones %}
+    {% if zone.is_parent is defined and zone.is_parent == true %}
+  parent = "{{ zone.name }}"
+    {% endif %}
+  {% endfor %}
+}
+
+{% for zone in i2_zones %}
+  {%- if zone.is_global is defined and zone.is_global == true -%}
+    object Zone "{{ zone.name }}" {
+  global = true
+}
+  {% else %}
+object Zone "{{ zone.name }}" {
+{{ "  endpoints = [ " }}
+    {%- for endpoint in zone.endpoints -%}
+      "{{ endpoint.name }}"
+      {%- if not loop.last and zone.endpoints | length> 1 -%}
+        {{", "}}
+      {%- endif -%}
+    {%- endfor -%}
+    {{" ]"}}
+}  
+  {% endif -%}
+{% endfor %}
+
+{% for zone in i2_zones %}
+  {% if zone.endpoints is defined %}
+    {% for endpoint in zone.endpoints %}
+object Endpoint "{{ endpoint.name }}" {  
+      {% if endpoint.host is defined %}
+  host = "{{ endpoint.host }}"
+  port = "{{ endpoint.port | default(5665)  }}" 
+      {% endif %}
+}
+    {% endfor %}
+  {% endif %}
+{% endfor %}
