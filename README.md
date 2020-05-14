@@ -151,6 +151,33 @@ Example usage:
         Foo: "bar"
 ```
 
+#### Variable: `i2_zones`
+Replaces `zones.conf` with configured zones.
+
+
+Example:
+```yaml
+  vars:
+    i2_zones:
+      - name: master
+        is_parent: true
+        endpoints:
+          - name: master1.example.tom
+            host: master1.example.tom
+            port: 15667
+          - name: master2.example.tom
+            host: 128.0.0.1
+          - name: global-templates
+            is_global: true
+          - name: director-global
+            is_global: true
+```
+
+is_parent = sets the parent zone to this zonename (optional).
+is_global = sets the zone to a global zone (optional).
+host = sets the host ip/fqdn to connect to this endpoint (optional). 
+port = sets the port (optional). Defaults to 5665. Requires host do be set.
+
 ### System specific variables
 The following variables are system specific and don't need to be overwritten in most cases. Be careful when making
 changes to any of these variables.
@@ -177,7 +204,7 @@ Example usage:
 
 ```yaml
 vars:
-  - i2_custom_features:
+  i2_custom_features:
     ApiListener:                #ObjectType
       api:                      #ObjectName
         accept_command: true    #ObjectAttribute
@@ -201,6 +228,32 @@ being triggered by setting `i2_manage_service` to false.
 #### Handler: `reload icinga2`
 This handler reloads Icinga 2 when configuration changes. You can prevent this handler from being triggered by setting
 `i2_manage_service` to false.
+
+### Examples
+
+Example Agent Config:
+
+Example usage (api featuer will NOT be enabled in this example):
+
+```yaml
+- name: icinga Package
+  hosts: icingaagents
+  roles:
+    - icinga2
+  vars:
+    i2_confd: [] #don't include conf.d
+    i2_zones:
+      - name: master
+        is_parent: true
+        endpoints:
+          - name: master1.example.tom
+            host: master1.example.tom
+            port: 15667
+          - name: master2.example.tom
+            host: 128.0.0.1
+```
+
+
 
 ## Development
 A roadmap of this project is located at https://github.com/Icinga/ansible-icinga2/milestones. Please consider this

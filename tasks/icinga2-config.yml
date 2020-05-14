@@ -19,9 +19,10 @@
   notify: reload icinga2
 
 - name: Check for constants sample file
+  become: yes
   stat:
     path: "{{ i2_conf_dir }}/constants.conf-sample"
-  register: sample_file
+  register: constants_sample_file
 
 - name: Copy original Icinga 2 config to sample
   become: yes
@@ -32,7 +33,7 @@
     owner: "{{ i2_user }}"
     group: "{{ i2_group }}"
     mode: 0644
-  when: not sample_file.stat.exists
+  when: not constants_sample_file.stat.exists
 
 - name: Manage Icinga 2 constants
   become: yes
@@ -43,3 +44,32 @@
     group: "{{ i2_group }}"
     mode: 0644
   notify: reload icinga2
+
+- name: Check for zones sample file
+  become: yes
+  stat:
+    path: "{{ i2_conf_dir }}/zones.conf-sample"
+  register: zones_sample_file
+
+- name: Copy original Icinga 2 config to sample
+  become: yes
+  copy:
+    remote_src: true
+    src: "{{ i2_conf_dir }}/zones.conf"
+    dest: "{{ i2_conf_dir }}/zones.conf-sample"
+    owner: "{{ i2_user }}"
+    group: "{{ i2_group }}"
+    mode: 0644
+  when: not zones_sample_file.stat.exists
+
+- name: Manage Icinga 2 zones
+  become: yes
+  template:
+    src: zones.conf.j2
+    dest: "{{ i2_conf_dir }}/zones.conf"
+    owner: "{{ i2_user }}"
+    group: "{{ i2_group }}"
+    mode: 0644
+  notify: reload icinga2
+  when: i2_zones is defined
+
