@@ -1,23 +1,31 @@
 ---
+# meta file for icinga.icinga2
+
 galaxy_info:
+  role_name: icinga2
   author: "Icinga Development Team <info@icinga.com>"
   description: "Install and configure Icinga 2"
-  company: "Icinga GmbH"
-  license: "license (Apache)"
-  min_ansible_version: 2.3.2
+
+  license: Apache
+
+  min_ansible_version: 2.8
+
   platforms:
-    - name: EL
-      versions:
-        - 6
-        - 7
     - name: Debian
       versions:
-        - 8
-        - 9
+        - stretch
+        - buster
+
     - name: Ubuntu
       versions:
-        - 16.04
-        - 18.04
+        - bionic
+        - focal
+
+    - name: EL
+      versions:
+        - 7
+        - 8
+
   galaxy_tags:
     - monitoring
     - icinga
