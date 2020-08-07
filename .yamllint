@@ -17,3 +17,5 @@ rules:
   empty-values: enable
   line-length:
     max: 100
+  truthy:
+    level: error
