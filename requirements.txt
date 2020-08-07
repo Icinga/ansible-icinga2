@@ -1,0 +1,7 @@
+pip
+setuptools
+ansible
+yamllint
+molecule
+ansible-lint
+docker
