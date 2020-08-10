@@ -1,9 +1,0 @@
-[all]
-icinga2
-centos7
-
-[debian]
-icinga2
-
-[rhel]
-centos7

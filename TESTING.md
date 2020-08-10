@@ -1,35 +1,36 @@
 # TESTING
-This role includes everything necessary to be tested with [Molecule](https://molecule.readthedocs.io/en/latest/). The
-[installation documentation](https://molecule.readthedocs.io/en/latest/installation.html) provides
-a great walk-through to get started.
+
+This role includes everything necessary to be tested with [Molecule](https://molecule.readthedocs.io/en/latest/).
+
+To install all required dependencies in a local development environment you can execute the following:
+
+```bash
+# If not existent
+python3 -m venv env
+
+source env/bin/activate
+
+pip3 install --upgrade -r requirements.txt
+```
 
 ## Running tests
-Run all tests (all scenarios on all platforms):
 
-``` shell
-molecule test --all
+To run the default scenario just execute
+
+```bash
+molecule test
 ```
 
-Run specific scenario (scenario `default` is used by default)
+To execute the role and preserve the containers use
 
-``` shell
-molecule test -s default
+```bash
+molecule converge
 ```
 
-Don't destroy container after running the tests:
+After that you can manually execute all tests with
 
-``` shell
-molecule test --destroy never
+```bash
+molecule verify
 ```
 
-Run only linter
-
-``` shell
-molecule lint
-```
-
-Run only syntax checks
-
-``` shell
-molecule syntax
-```
+For more details on how to use molecule please refer to the documentation.
