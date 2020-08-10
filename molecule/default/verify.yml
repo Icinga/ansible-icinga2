@@ -1,0 +1,6 @@
+---
+
+- name: Verify default
+  hosts: all
+
+  tasks:
