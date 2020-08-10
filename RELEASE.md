@@ -1,12 +1,14 @@
 # Release Workflow
-Before submitting a new release, make sure all relevant pull requests and local branches have been merged to the `master`
+
+Before submitting a new release, make sure all relevant pull requests and local branches have been merged to the `devel`
 branch. All tests must pass before a release is tagged.
 
+## 1. Testing
 
-## Testing
 Make sure tests pass before starting with a release. See [TESTING.md](TESTING.md) for more information.
 
-## 1. AUTHORS
+## 2. Authors
+
 Update the [AUTHORS](AUTHORS) and [.mailmap](.mailmap) file
 
 ``` bash
@@ -15,26 +17,25 @@ git log --use-mailmap | grep ^Author: | cut -f2- -d' ' | sort | uniq > AUTHORS
 git commit -am "Update AUTHORS"
 ```
 
-## 2. Changelog
+## 3. Changelog
+
 Install [github-changelog-generator](https://github.com/skywinder/github-changelog-generator)
+
 ```bash
 gem install github_changelog_generator
 ```
 
 Generate [CHANGELOG.md](CHANGELOG.md)
+
 ```bash
 github_changelog_generator -t <github-access-token> --future-release=v1.0.0
 ```
 
-## 3. Git Tag
-Commit all changes to the `master` branch
+## 4. Git Tag
 
-``` bash
-git commit -v -a -m "Release version <VERSION>"
-git push
-```
+Merge all changes to the `master` branch
 
-Tag the release
+Now tag the release
 
 ``` bash
 git tag -m "Version <VERSION>" v<VERSION>
@@ -47,4 +48,5 @@ git push --tags
 ```
 
 ## Ansible Galaxy
+
 The role is uploaded automatically to [Ansible Galaxy](https://galaxy.ansible.com/).
