@@ -1,33 +1,103 @@
 ---
+
 dependency:
   name: galaxy
+
 driver:
   name: docker
-lint:
-  name: yamllint
+
+lint: |
+  set -e
+  yamllint --strict .
+  ansible-lint
+
 platforms:
+  - name: ubuntu-bionic
+    image: geerlingguy/docker-ubuntu1804-ansible:latest
+    command: /sbin/init
+    privileged: true
+    # tty: true
+    tmpfs:
+      - /run
+      - /run/lock
+      - /run/sshd
+      - /tmp
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    pre_build_image: true
+
+  - name: ubuntu-focal
+    image: geerlingguy/docker-ubuntu2004-ansible:latest
+    command: /sbin/init
+    privileged: true
+    # tty: true
+    tmpfs:
+      - /run
+      - /run/lock
+      - /tmp
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    pre_build_image: true
+
+  - name: debian-stretch
+    image: geerlingguy/docker-debian9-ansible:latest
+    command: /sbin/init
+    privileged: true
+    # tty: true
+    tmpfs:
+      - /run
+      - /run/lock
+      - /run/sshd
+      - /tmp
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    pre_build_image: true
+
+  - name: debian-buster
+    image: geerlingguy/docker-debian10-ansible:latest
+    command: /sbin/init
+    privileged: true
+    # tty: true
+    tmpfs:
+      - /run
+      - /run/lock
+      - /tmp
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    pre_build_image: true
+
   - name: centos7
-    image: solita/centos-systemd:7
+    image: geerlingguy/docker-centos7-ansible:latest
     command: /sbin/init
-    capabilities:
-      - SYS_ADMIN
+    privileged: true
+    # tty: true
+    tmpfs:
+      - /run
+      - /run/lock
+      - /run/sshd
+      - /tmp
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
-  - name: ubuntu16
-    image: solita/ubuntu-systemd:16.04
+    pre_build_image: true
+
+  - name: centos8
+    image: geerlingguy/docker-centos8-ansible:latest
     command: /sbin/init
-    capabilities:
-      - SYS_ADMIN
+    privileged: true
+    # tty: true
+    tmpfs:
+      - /run
+      - /run/lock
+      - /tmp
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    pre_build_image: true
+
 provisioner:
   name: ansible
-  lint:
-    name: ansible-lint
-scenario:
-  name: default
+  config_options:
+    defaults:
+      stdout_callback: yaml
+
 verifier:
-  name: testinfra
-  lint:
-    name: flake8
-    enabled: true
+  name: ansible
