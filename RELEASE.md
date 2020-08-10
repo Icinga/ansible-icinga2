@@ -12,7 +12,7 @@ Make sure tests pass before starting with a release. See [TESTING.md](TESTING.md
 Update the [AUTHORS](AUTHORS) and [.mailmap](.mailmap) file
 
 ``` bash
-git checkout master
+git checkout devel
 git log --use-mailmap | grep ^Author: | cut -f2- -d' ' | sort | uniq > AUTHORS
 git commit -am "Update AUTHORS"
 ```
