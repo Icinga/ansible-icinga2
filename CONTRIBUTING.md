@@ -9,10 +9,12 @@ Before starting your work on this module, you should [fork the project] to your 
 freely experiment with your changes. When your changes are complete, submit a [pull request]. All pull requests will be
 reviewed and merged if they suit some general guidelines:
 
-* Changes are located in a topic branch
-* For new functionality, proper tests are written
-* Changes should not solve certain problems on special environments
-* Your change does not handle third party software for which dedicated Ansible role exist, such as creating databases, installing webserver etc.
+- Changes are located in a topic branch
+- For new functionality, proper tests are written
+- Changes should not solve certain problems on special environments
+- Your change does not handle third party software for which dedicated Ansible role exist, such as creating databases, installing webserver etc.
+
+Only use `devel` branch for your pull requests, as the master/main branch should only contain working, tagged releases.
 
 Furthermore, please take care to maintain the existing coding style.
 
