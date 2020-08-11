@@ -1,0 +1,11 @@
+---
+
+- name: Prepare default
+  hosts: all
+
+  tasks:
+    - name: Update apt cache and auto install python3-apt
+      apt:
+        update_cache: true
+        cache_valid_time: 7200
+      when: ansible_os_family == 'Debian'
