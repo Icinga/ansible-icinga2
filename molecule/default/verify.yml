@@ -3,4 +3,36 @@
 - name: Verify default
   hosts: all
 
+  vars:
+    debian_repo_path: "/etc/apt/sources.list.d/{{ ansible_distribution_release }}-icinga.list"
+    el_repo_path: /etc/yum.repos.d/ICINGA-release.repo
+
   tasks:
+    - name: Ensure that repository exists
+      file:
+        path: "{{ debian_repo_path if ansible_os_family == 'Debian' else \
+                  el_repo_path if ansible_os_family == 'RedHat' }}"
+        owner: root
+        group: root
+        mode: '644'
+        state: present
+      register: repo_out
+      check_mode: true
+      failed_when: repo_out.changed
+
+    - name: Ensure icinga2 is installed
+      package:
+        name: icinga2
+        state: present
+      register: installed_out
+      check_mode: true
+      failed_when: installed_out.changed
+
+    - name: Ensure icinga2 service is running and enabled
+      service:
+        name: icinga2
+        state: started
+        enabled: true
+      register: service_out
+      check_mode: true
+      failed_when: service_out.changed
