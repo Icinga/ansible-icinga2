@@ -1,0 +1,7 @@
+---
+
+- name: Converge default
+  hosts: all
+
+  roles:
+    - icinga.icinga2
