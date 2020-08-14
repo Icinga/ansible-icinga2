@@ -26,6 +26,7 @@
 {%- elif val is match('^\d+(ms|s|h|d)?$') %}
 {{ key }} = {{ val }}
 {%- elif val | bool == False and val | string == "false" %}
+{%- elif val | bool == True and val | string == "true" %}
 {{ key }} = {{ val }}
 {%- else %}
 {{ key }} = "{{ val | quote }}"
