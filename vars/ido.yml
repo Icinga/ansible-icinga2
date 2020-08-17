@@ -1,0 +1,7 @@
+---
+# vars file for icinga2 ido defintions
+
+ido_user: "icinga"
+ido_password: "icinga"
+ido_host: "localhost"
+ido_database: "icinga"
