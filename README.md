@@ -1,8 +1,10 @@
+**Attention: This role is no longer maintained.** See: https://github.com/Icinga/ansible-collection-icinga
+
 # Icinga 2 Role for Ansible
 
 Ansible role to install and configure [Icinga 2](https://www.icinga.com/products/icinga-2/).
 
-**Attention: This role is under heavy development.**
+
 
 The scope of this role is to handle the installation and configuration of Icinga 2. In the future it will be possible to configure Icinga as master, satellite or agent. This role handles only Icinga 2 and not any third-party software (like databases, nrpe, UI etc.). The installation and configuration of Icinga Web 2 is currently not part of this role.
 
